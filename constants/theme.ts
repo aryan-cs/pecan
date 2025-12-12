@@ -5,21 +5,25 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
+// App brand colors
+export const BRAND_PRIMARY = '#17ffa2';
+export const BRAND_PRIMARY_DARK = '#10b271';
+
+const tintColorLight = BRAND_PRIMARY;
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#0e0e0eff',
+    background: '#fcfcfcff',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: '#ffffffff',
+    background: '#0e0e0eff',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
