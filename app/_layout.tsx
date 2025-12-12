@@ -1,18 +1,33 @@
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemeControllerProvider, useThemeController } from '@/context/theme-context';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { default as React, useEffect, useState } from 'react';
+import { Appearance } from 'react-native';
 import 'react-native-reanimated';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+function RootNavigation() {
+  const colorScheme = useThemeController().colorScheme ?? 'light';
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const systemScheme = Appearance.getColorScheme() ?? 'light';
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
@@ -30,17 +45,8 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider
-      value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-      children={
-        <>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </>
-      }
-    />
+    <ThemeControllerProvider initialScheme={systemScheme}>
+      <RootNavigation />
+    </ThemeControllerProvider>
   );
 }

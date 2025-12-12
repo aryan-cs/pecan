@@ -1,7 +1,8 @@
 import Sidebar, { SIDEBAR_WIDTH } from '@/components/sidebar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BRAND_PRIMARY } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
+import { useThemeController } from '@/context/theme-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -18,6 +19,11 @@ export function AppShell({ title, children }: AppShellProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const iconColor = useThemeColor({}, 'text');
   const gestureStartX = useRef(0);
+  const { colorScheme } = useThemeController();
+  const accent =
+    colorScheme === 'dark'
+      ? Colors.general.brandDarkMode
+      : Colors.general.brandLightMode;
 
   const scrimOpacity = translateX.interpolate({
     inputRange: [0, SIDEBAR_WIDTH],
@@ -125,7 +131,7 @@ export function AppShell({ title, children }: AppShellProps) {
           <TouchableOpacity style={styles.hamburgerButton} onPress={toggleSidebar}>
             <FontAwesome6 name="bars" size={30} color={iconColor} />
           </TouchableOpacity>
-          <ThemedText type="title" style={[styles.headerTitle, { color: BRAND_PRIMARY }]}>
+          <ThemedText type="title" style={[styles.headerTitle, { color: accent }]}>
             {title}
           </ThemedText>
         </ThemedView>
@@ -169,7 +175,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '90%',
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(131, 131, 131, 0.66)',
     marginTop: 16,
     marginBottom: 8,
   },

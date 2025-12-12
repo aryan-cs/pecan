@@ -1,21 +1,22 @@
+import { useThemeController } from '@/context/theme-context';
 import { useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { Appearance } from 'react-native';
 
 /**
- * To support static rendering, this value needs to be re-calculated on the client side for web
+ * Web picks this file; wire it to the same theme controller so toggling works in browsers.
+ * Preserve hydration guard to avoid mismatches during SSR/SSG.
  */
 export function useColorScheme() {
+  const { colorScheme } = useThemeController();
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
     setHasHydrated(true);
   }, []);
 
-  const colorScheme = useRNColorScheme();
-
-  if (hasHydrated) {
-    return colorScheme;
+  if (!hasHydrated) {
+    return Appearance.getColorScheme() ?? 'light';
   }
 
-  return 'light';
+  return colorScheme ?? 'light';
 }

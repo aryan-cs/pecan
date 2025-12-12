@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
-import { BRAND_PRIMARY } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
+import { useThemeController } from '@/context/theme-context';
 import { FontAwesome6, Octicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 import React from 'react';
@@ -14,6 +15,12 @@ type Props = {
 
 export default function Sidebar({ translateX, onNavigate }: Props) {
   const pathname = usePathname();
+  const { toggle: toggleTheme, colorScheme } = useThemeController();
+  const accent =
+    colorScheme === 'dark'
+      ? Colors.general.brandDarkMode
+      : Colors.general.brandLightMode;
+  const baseColor = Colors[colorScheme === 'dark' ? 'dark' : 'light'].text;
 
   const slideX = translateX.interpolate({
     inputRange: [0, SIDEBAR_WIDTH],
@@ -48,12 +55,12 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
             <Octicons
               name="home-fill"
               size={22}
-              color={isActive('/') ? BRAND_PRIMARY : '#ffffff'}
+              color={isActive('/') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/') ? { color: BRAND_PRIMARY } : undefined,
+                isActive('/') ? { color: accent } : { color: baseColor },
               ]}
             >
               Home
@@ -66,12 +73,12 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
               name="user-group"
               solid
               size={22}
-              color={isActive('/button2') ? BRAND_PRIMARY : '#ffffff'}
+              color={isActive('/button2') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/button2') ? { color: BRAND_PRIMARY } : undefined,
+                isActive('/button2') ? { color: accent } : { color: baseColor },
               ]}
             >
               Groups
@@ -84,12 +91,12 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
               name="wallet"
               solid
               size={22}
-              color={isActive('/button3') ? BRAND_PRIMARY : '#ffffff'}
+              color={isActive('/button3') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/button3') ? { color: BRAND_PRIMARY } : undefined,
+                isActive('/button3') ? { color: accent } : { color: baseColor },
               ]}
             >
               Wallet
@@ -99,18 +106,31 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
       </View>
 
       <View style={styles.footerSection}>
+        <Pressable style={styles.menuItem} onPress={toggleTheme}>
+          <View style={styles.menuItemContent}>
+            <FontAwesome6
+              name="circle-half-stroke"
+              size={22}
+              color={accent}
+              solid
+            />
+            <ThemedText style={styles.menuItemText}>
+              Switch to {colorScheme === 'dark' ? 'Light' : 'Dark'}
+            </ThemedText>
+          </View>
+        </Pressable>
         <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/settings')}>
           <View style={styles.menuItemContent}>
             <FontAwesome6
               name="gear"
               solid
               size={22}
-              color={isActive('/settings') ? BRAND_PRIMARY : '#ffffff'}
+              color={isActive('/settings') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/settings') ? { color: BRAND_PRIMARY } : undefined,
+                isActive('/settings') ? { color: accent } : { color: baseColor },
               ]}
             >
               Settings
@@ -123,12 +143,12 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
               name="circle-user"
               solid
               size={22}
-              color={isActive('/profile') ? BRAND_PRIMARY : '#ffffff'}
+              color={isActive('/profile') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/profile') ? { color: BRAND_PRIMARY } : undefined,
+                isActive('/profile') ? { color: accent } : { color: baseColor },
               ]}
             >
               Profile

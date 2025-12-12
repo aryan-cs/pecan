@@ -5,17 +5,18 @@
 
 import { Platform } from 'react-native';
 
-// App brand colors
-export const BRAND_PRIMARY = '#17ffa2';
-export const BRAND_PRIMARY_DARK = '#10b271';
+const brandDarkMode = '#17ffa2';
+const brandLightMode = '#06d482ff';
+export const BRAND_DARK_MODE = brandDarkMode;
+export const BRAND_LIGHT_MODE = brandLightMode;
 
-const tintColorLight = BRAND_PRIMARY;
-const tintColorDark = '#fff';
+const tintColorLight = brandLightMode;
+const tintColorDark = brandDarkMode;
 
 export const Colors = {
   light: {
     text: '#0e0e0eff',
-    background: '#fcfcfcff',
+    background: '#ebebebff',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
@@ -31,6 +32,25 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     sidebarBackground: '#121212ff',
   },
+  general: {
+    brandDarkMode,
+    brandLightMode,
+    surfaceLight: '#ffffff',
+    surfaceDark: 'rgba(255,255,255,0.06)',
+    borderLight: '#d0d0d0',
+    borderDark: 'rgba(255,255,255,0.18)',
+    inputBgLight: '#ffffff',
+    inputBgDark: '#0f0f0f',
+    inputPlaceholderLight: 'rgba(0,0,0,0.45)',
+    inputPlaceholderDark: 'rgba(255,255,255,0.55)',
+    error: '#ff3b30',
+    warning: '#ffc400ff',
+    success: '#34c759',
+    green: '#34c759',
+    red: '#ff3b30',
+    blue: '#0a84ff',
+    yellow: '#ffc400ff',
+  }
 };
 
 export const Fonts = Platform.select({
