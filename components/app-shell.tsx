@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 28,
     lineHeight: 28,
   },
   darkenOverlay: {

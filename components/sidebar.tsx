@@ -1,6 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { BRAND_PRIMARY } from '@/constants/theme';
-import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, Octicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 import React from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
@@ -45,8 +45,8 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
       <View style={styles.menuSection}>
         <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)')}>
           <View style={styles.menuItemContent}>
-            <FontAwesome5
-              name="home"
+            <Octicons
+              name="home-fill"
               size={22}
               color={isActive('/') ? BRAND_PRIMARY : '#ffffff'}
             />
@@ -64,6 +64,7 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
           <View style={styles.menuItemContent}>
             <FontAwesome6
               name="user-group"
+              solid
               size={22}
               color={isActive('/button2') ? BRAND_PRIMARY : '#ffffff'}
             />
@@ -81,6 +82,7 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
           <View style={styles.menuItemContent}>
             <FontAwesome6
               name="wallet"
+              solid
               size={22}
               color={isActive('/button3') ? BRAND_PRIMARY : '#ffffff'}
             />
@@ -101,6 +103,7 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
           <View style={styles.menuItemContent}>
             <FontAwesome6
               name="gear"
+              solid
               size={22}
               color={isActive('/settings') ? BRAND_PRIMARY : '#ffffff'}
             />
@@ -117,7 +120,8 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
         <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/profile')}>
           <View style={styles.menuItemContent}>
             <FontAwesome6
-              name="user"
+              name="circle-user"
+              solid
               size={22}
               color={isActive('/profile') ? BRAND_PRIMARY : '#ffffff'}
             />
