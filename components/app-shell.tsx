@@ -6,7 +6,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface AppShellProps {
   title: string;
@@ -17,6 +17,7 @@ export function AppShell({ title, children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const translateX = useRef(new Animated.Value(0)).current;
   const iconColor = useThemeColor({}, 'text');
+  const gestureStartX = useRef(0);
 
   const scrimOpacity = translateX.interpolate({
     inputRange: [0, SIDEBAR_WIDTH],
@@ -34,6 +35,66 @@ export function AppShell({ title, children }: AppShellProps) {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponderCapture: () => sidebarOpen,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        const { dx, dy, x0 } = gestureState;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+
+        if (absDx < 10 || absDx <= absDy) return false;
+
+        // When closed, only allow swipe-open from the left edge.
+        if (!sidebarOpen) {
+          return x0 <= 30 && dx > 0;
+        }
+
+        // When open, allow horizontal swipes anywhere to close.
+        return true;
+      },
+      onPanResponderGrant: () => {
+        translateX.stopAnimation((currentValue: number) => {
+          gestureStartX.current = currentValue;
+        });
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        const next = Math.min(
+          SIDEBAR_WIDTH,
+          Math.max(0, gestureStartX.current + gestureState.dx),
+        );
+        translateX.setValue(next);
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        const releaseValue = Math.min(
+          SIDEBAR_WIDTH,
+          Math.max(0, gestureStartX.current + gestureState.dx),
+        );
+        const { vx } = gestureState;
+
+        // Velocity wins; otherwise fall back to position threshold.
+        if (vx < -0.2) {
+          setSidebarOpen(false);
+          return;
+        }
+        if (vx > 0.2) {
+          setSidebarOpen(true);
+          return;
+        }
+
+        setSidebarOpen(releaseValue > SIDEBAR_WIDTH / 2);
+      },
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderTerminate: (evt, gestureState) => {
+        const releaseValue = Math.min(
+          SIDEBAR_WIDTH,
+          Math.max(0, gestureStartX.current + gestureState.dx),
+        );
+        setSidebarOpen(releaseValue > SIDEBAR_WIDTH / 2);
+      },
+    }),
+  ).current;
+
   const handleNavigate = (path: Parameters<typeof router.push>[0]) => {
     // Close the sidebar with the slide animation, then navigate.
     setSidebarOpen(false);
@@ -43,10 +104,12 @@ export function AppShell({ title, children }: AppShellProps) {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} {...panResponder.panHandlers}>
       <Sidebar translateX={translateX} onNavigate={handleNavigate} />
 
-      <Animated.View style={[styles.mainContent, { transform: [{ translateX }] }]}> 
+      <Animated.View
+        style={[styles.mainContent, { transform: [{ translateX }] }]}
+      > 
         <Animated.View
           pointerEvents={sidebarOpen ? 'auto' : 'none'}
           style={[styles.darkenOverlay, { opacity: scrimOpacity }]}
