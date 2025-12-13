@@ -8,7 +8,6 @@ function getTitle(pathname: string) {
   if (pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/')
     return 'Kale';
   if (pathname === '/button1' || pathname === '/(tabs)/button1') return 'Button 1';
-  if (pathname === '/button2' || pathname === '/(tabs)/button2') return 'Groups';
   if (pathname === '/button3' || pathname === '/(tabs)/button3') return 'Wallet';
   if (pathname === '/settings' || pathname === '/(tabs)/settings') return 'Settings';
   if (pathname === '/profile' || pathname === '/(tabs)/profile') return 'Profile';

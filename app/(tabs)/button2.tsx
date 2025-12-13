@@ -1,10 +1,10 @@
-import { ThemedText } from '@/components/themed-text';
-import React from 'react';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
 
-export default function Button2Screen() {
-  return <ThemedText>
+export default function RemovedScreen() {
+  useEffect(() => {
+    router.replace('/(tabs)');
+  }, []);
 
-    Here, you can manage your groups.
-
-  </ThemedText>;
+  return null;
 }

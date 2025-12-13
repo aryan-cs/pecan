@@ -67,24 +67,6 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
             </ThemedText>
           </View>
         </Pressable>
-        <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/button2')}>
-          <View style={styles.menuItemContent}>
-            <FontAwesome6
-              name="user-group"
-              solid
-              size={22}
-              color={isActive('/button2') ? accent : baseColor}
-            />
-            <ThemedText
-              style={[
-                styles.menuItemText,
-                isActive('/button2') ? { color: accent } : { color: baseColor },
-              ]}
-            >
-              Groups
-            </ThemedText>
-          </View>
-        </Pressable>
         <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/button3')}>
           <View style={styles.menuItemContent}>
             <FontAwesome6

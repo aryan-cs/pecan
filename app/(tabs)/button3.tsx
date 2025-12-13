@@ -7,11 +7,10 @@ import React, { useState } from 'react';
 import { Alert, Dimensions, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const CIRCLE_SIZE = Math.round(width * 0.65);
+const CIRCLE_SIZE = Math.round(width * 0.8);
 
 export default function WalletScreen() {
-  // TODO: replace with real balance from state/API.
-  const balance = 100;
+  const balance = 0;
   const { colorScheme } = useThemeController();
   const [amount, setAmount] = useState('');
 
@@ -124,12 +123,12 @@ const styles = StyleSheet.create({
   balanceWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 86,
+    paddingTop: 48,
   },
   balanceCircle: {
     width: CIRCLE_SIZE,
     height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   balanceText: {
-    fontSize: 42,
+    fontSize: 64,
   },
   bottomSection: {
     marginTop: 'auto',
