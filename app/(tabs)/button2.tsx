@@ -1,9 +1,9 @@
-import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { router } from "expo-router";
+import { useEffect } from "react";
 
 export default function RemovedScreen() {
   useEffect(() => {
-    router.replace('/(tabs)');
+    router.replace("/(tabs)");
   }, []);
 
   return null;

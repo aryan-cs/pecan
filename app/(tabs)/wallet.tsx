@@ -24,37 +24,31 @@ export default function WalletScreen() {
   const balance = 0;
   const { colorScheme } = useThemeController();
   const [amount, setAmount] = useState("");
-  
-  // State for UI rendering
+
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  
-  // Ref to track keyboard state inside the static PanResponder
+
   const isKeyboardVisibleRef = useRef(false);
-  
-  // Ref to programmatically focus the input
+
   const inputRef = useRef<TextInput>(null);
 
   const insets = useSafeAreaInsets();
   const animatedPadding = useRef(new Animated.Value(insets.bottom)).current;
 
-  // PanResponder to handle swipes
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only take over if it's a distinct vertical swipe (> 20px)
-        return Math.abs(gestureState.dy) > 20 && Math.abs(gestureState.dx) < Math.abs(gestureState.dy);
+        return (
+          Math.abs(gestureState.dy) > 20 &&
+          Math.abs(gestureState.dx) < Math.abs(gestureState.dy)
+        );
       },
       onPanResponderRelease: (_, gestureState) => {
         const { dy } = gestureState;
 
-        // SWIPE UP (dy is negative)
         if (dy < -50) {
           inputRef.current?.focus();
-        } 
-        // SWIPE DOWN (dy is positive)
-        else if (dy > 50) {
-          // Only trigger cancel/clear if the keyboard is currently open
+        } else if (dy > 50) {
           if (isKeyboardVisibleRef.current) {
             Keyboard.dismiss();
             setAmount("");
@@ -65,15 +59,17 @@ export default function WalletScreen() {
   ).current;
 
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const onShow = (event: KeyboardEvent) => {
       setKeyboardVisible(true);
-      isKeyboardVisibleRef.current = true; // Update ref for PanResponder
-      
+      isKeyboardVisibleRef.current = true;
+
       Animated.timing(animatedPadding, {
-        toValue: insets.bottom + 290, // Adjust this value based on your actual keyboard overlap needs
+        toValue: insets.bottom + 290,
         duration: 100,
         useNativeDriver: false,
       }).start();
@@ -81,7 +77,7 @@ export default function WalletScreen() {
 
     const onHide = (event: KeyboardEvent) => {
       setKeyboardVisible(false);
-      isKeyboardVisibleRef.current = false; // Update ref for PanResponder
+      isKeyboardVisibleRef.current = false;
 
       Animated.timing(animatedPadding, {
         toValue: insets.bottom,
@@ -99,15 +95,35 @@ export default function WalletScreen() {
     };
   }, [insets.bottom]);
 
-  const accent = colorScheme === "dark" ? Colors.general.brandDarkMode : Colors.general.brandLightMode;
-  const inputPlaceholder = colorScheme === "dark" ? Colors.general.inputPlaceholderDark : Colors.general.inputPlaceholderLight;
+  const accent =
+    colorScheme === "dark"
+      ? Colors.general.brandDarkMode
+      : Colors.general.brandLightMode;
+  const inputPlaceholder =
+    colorScheme === "dark"
+      ? Colors.general.inputPlaceholderDark
+      : Colors.general.inputPlaceholderLight;
   const baseText = Colors[colorScheme === "dark" ? "dark" : "light"].text;
-  const accentTranslucent = colorScheme === "dark" ? "rgba(23, 255, 162, 0.1)" : "rgba(23, 255, 162, 0.12)";
+  const accentTranslucent =
+    colorScheme === "dark"
+      ? "rgba(23, 255, 162, 0.1)"
+      : "rgba(23, 255, 162, 0.12)";
   const redTranslucent = "rgba(255, 59, 48, 0.12)";
-  const neutralTranslucent = colorScheme === "dark" ? "rgba(255,255,255,0.06)" : "#f2f2f2";
+  const neutralTranslucent =
+    colorScheme === "dark" ? "rgba(255,255,255,0.06)" : "#f2f2f2";
 
-  const circleBorder = balance > 0 ? accent : balance < 0 ? Colors.general.red : Colors.general.borderLight;
-  const circleBg = balance > 0 ? accentTranslucent : balance < 0 ? redTranslucent : neutralTranslucent;
+  const circleBorder =
+    balance > 0
+      ? accent
+      : balance < 0
+      ? Colors.general.red
+      : Colors.general.borderLight;
+  const circleBg =
+    balance > 0
+      ? accentTranslucent
+      : balance < 0
+      ? redTranslucent
+      : neutralTranslucent;
 
   const sanitizeAmount = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
@@ -135,7 +151,9 @@ export default function WalletScreen() {
           </View>
         </View>
 
-        <Animated.View style={[styles.bottomSection, { paddingBottom: animatedPadding }]}>
+        <Animated.View
+          style={[styles.bottomSection, { paddingBottom: animatedPadding }]}
+        >
           <TextInput
             ref={inputRef}
             value={amount ? `$${amount}` : ""}
@@ -158,7 +176,6 @@ export default function WalletScreen() {
                 fillColor={accent}
                 onPress={() => {
                   if (!amount) Keyboard.dismiss();
-                  // TODO: handle deposit
                 }}
               />
             </View>
@@ -216,6 +233,6 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: "100%",
     marginTop: 10,
-    marginBottom: 10, 
+    marginBottom: 10,
   },
 });

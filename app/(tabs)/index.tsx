@@ -5,6 +5,7 @@ import { useThemeController } from "@/context/theme-context";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -44,6 +45,13 @@ export default function HomeScreen() {
   const modalBg = colorScheme === "dark" ? "#000" : "#fff";
 
   const handleSave = () => {
+    if (!name.trim()) {
+      Alert.alert(
+        "Name required",
+        "Please enter a name before creating the group."
+      );
+      return;
+    }
     const finalDuration =
       selectedDuration === "Custom"
         ? customDate.toISOString()
@@ -116,13 +124,14 @@ export default function HomeScreen() {
                   >
                     <TextInput
                       style={[styles.input, { color: textColor }]}
-                      placeholder="Funky group name here..."
+                      // theres some weird alignment issues going on here with the placeholder
+                      // placeholder="Funky group name here..."
                       placeholderTextColor={placeholderColor}
                       value={name}
                       onChangeText={setName}
                       autoFocus
                       textAlignVertical="center"
-                      includeFontPadding={false}
+                      // includeFontPadding={false}
                     />
                   </View>
                 </View>

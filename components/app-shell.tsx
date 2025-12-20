@@ -1,14 +1,21 @@
-import Sidebar, { SIDEBAR_WIDTH } from '@/components/sidebar';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { useThemeController } from '@/context/theme-context';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { FontAwesome6 } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React, { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Animated, Keyboard, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Sidebar, { SIDEBAR_WIDTH } from "@/components/sidebar";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Colors } from "@/constants/theme";
+import { useThemeController } from "@/context/theme-context";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { type ReactNode, useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Keyboard,
+  PanResponder,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AppShellProps {
   title: string;
@@ -18,18 +25,18 @@ interface AppShellProps {
 export function AppShell({ title, children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const translateX = useRef(new Animated.Value(0)).current;
-  const iconColor = useThemeColor({}, 'text');
+  const iconColor = useThemeColor({}, "text");
   const gestureStartX = useRef(0);
   const { colorScheme } = useThemeController();
   const accent =
-    colorScheme === 'dark'
+    colorScheme === "dark"
       ? Colors.general.brandDarkMode
       : Colors.general.brandLightMode;
 
   const scrimOpacity = translateX.interpolate({
     inputRange: [0, SIDEBAR_WIDTH],
     outputRange: [0, 1],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
   useEffect(() => {
@@ -57,12 +64,10 @@ export function AppShell({ title, children }: AppShellProps) {
 
         if (absDx < 10 || absDx <= absDy) return false;
 
-        // When closed, only allow swipe-open from the left edge.
         if (!sidebarOpen) {
           return x0 <= 30 && dx > 0;
         }
 
-        // When open, allow horizontal swipes anywhere to close.
         return true;
       },
       onPanResponderGrant: () => {
@@ -73,18 +78,17 @@ export function AppShell({ title, children }: AppShellProps) {
       onPanResponderMove: (evt, gestureState) => {
         const next = Math.min(
           SIDEBAR_WIDTH,
-          Math.max(0, gestureStartX.current + gestureState.dx),
+          Math.max(0, gestureStartX.current + gestureState.dx)
         );
         translateX.setValue(next);
       },
       onPanResponderRelease: (evt, gestureState) => {
         const releaseValue = Math.min(
           SIDEBAR_WIDTH,
-          Math.max(0, gestureStartX.current + gestureState.dx),
+          Math.max(0, gestureStartX.current + gestureState.dx)
         );
         const { vx } = gestureState;
 
-        // Velocity wins; otherwise fall back to position threshold.
         if (vx < -0.2) {
           setSidebarOpen(false);
           return;
@@ -100,15 +104,14 @@ export function AppShell({ title, children }: AppShellProps) {
       onPanResponderTerminate: (evt, gestureState) => {
         const releaseValue = Math.min(
           SIDEBAR_WIDTH,
-          Math.max(0, gestureStartX.current + gestureState.dx),
+          Math.max(0, gestureStartX.current + gestureState.dx)
         );
         setSidebarOpen(releaseValue > SIDEBAR_WIDTH / 2);
       },
-    }),
+    })
   ).current;
 
   const handleNavigate = (path: Parameters<typeof router.push>[0]) => {
-    // Close the sidebar with the slide animation, then navigate.
     setSidebarOpen(false);
     setTimeout(() => {
       router.push(path);
@@ -125,9 +128,9 @@ export function AppShell({ title, children }: AppShellProps) {
 
       <Animated.View
         style={[styles.mainContent, { transform: [{ translateX }] }]}
-      > 
+      >
         <Animated.View
-          pointerEvents={sidebarOpen ? 'auto' : 'none'}
+          pointerEvents={sidebarOpen ? "auto" : "none"}
           style={[styles.darkenOverlay, { opacity: scrimOpacity }]}
         >
           <TouchableOpacity
@@ -137,12 +140,18 @@ export function AppShell({ title, children }: AppShellProps) {
           />
         </Animated.View>
 
-        <SafeAreaView edges={["top"]} style={styles.safeArea}> 
+        <SafeAreaView edges={["top"]} style={styles.safeArea}>
           <ThemedView style={styles.header}>
-            <TouchableOpacity style={styles.hamburgerButton} onPress={toggleSidebar}>
+            <TouchableOpacity
+              style={styles.hamburgerButton}
+              onPress={toggleSidebar}
+            >
               <FontAwesome6 name="bars" size={30} color={iconColor} />
             </TouchableOpacity>
-            <ThemedText type="title" style={[styles.headerTitle, { color: accent }]}> 
+            <ThemedText
+              type="title"
+              style={[styles.headerTitle, { color: accent }]}
+            >
               {title}
             </ThemedText>
           </ThemedView>
@@ -161,36 +170,36 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    position: 'relative',
+    position: "relative",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingTop: 0,
     paddingHorizontal: 24,
     gap: 12,
   },
   safeArea: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   headerTitle: {
     fontSize: 28,
     lineHeight: 28,
   },
   darkenOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
     zIndex: 5,
   },
   divider: {
-    alignSelf: 'center',
-    width: '90%',
+    alignSelf: "center",
+    width: "90%",
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(131, 131, 131, 0.66)',
+    backgroundColor: "rgba(131, 131, 131, 0.66)",
     marginTop: 8,
     marginBottom: 8,
   },

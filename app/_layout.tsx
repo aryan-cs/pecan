@@ -1,25 +1,34 @@
-
-import { ThemeControllerProvider, useThemeController } from '@/context/theme-context';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import * as Font from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { default as React, useEffect, useState } from 'react';
-import { Appearance } from 'react-native';
-import 'react-native-reanimated';
+import {
+  ThemeControllerProvider,
+  useThemeController,
+} from "@/context/theme-context";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import * as Font from "expo-font";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { default as React, useEffect, useState } from "react";
+import { Appearance } from "react-native";
+import "react-native-reanimated";
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: "(tabs)",
 };
 
 function RootNavigation() {
-  const colorScheme = useThemeController().colorScheme ?? 'light';
+  const colorScheme = useThemeController().colorScheme ?? "light";
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", title: "Modal" }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
@@ -27,16 +36,16 @@ function RootNavigation() {
 }
 
 export default function RootLayout() {
-  const systemScheme = Appearance.getColorScheme() ?? 'light';
+  const systemScheme = Appearance.getColorScheme() ?? "light";
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
     (async () => {
       await Font.loadAsync({
-        'Inter-Regular': require('@/assets/fonts/Inter/static/Inter_18pt-Regular.ttf'),
-        'Inter-Bold': require('@/assets/fonts/Inter/static/Inter_18pt-Bold.ttf'),
-        'Inter-SemiBold': require('@/assets/fonts/Inter/static/Inter_18pt-SemiBold.ttf'),
-        'BBH_Bartle-Regular': require('@/assets/fonts/BBH_Bartle/BBHBartle-Regular.ttf'),
+        "Inter-Regular": require("@/assets/fonts/Inter/static/Inter_18pt-Regular.ttf"),
+        "Inter-Bold": require("@/assets/fonts/Inter/static/Inter_18pt-Bold.ttf"),
+        "Inter-SemiBold": require("@/assets/fonts/Inter/static/Inter_18pt-SemiBold.ttf"),
+        "BBH_Bartle-Regular": require("@/assets/fonts/BBH_Bartle/BBHBartle-Regular.ttf"),
       });
       setFontsLoaded(true);
     })();
