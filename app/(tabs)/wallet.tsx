@@ -9,6 +9,7 @@ import {
   Dimensions,
   Keyboard,
   KeyboardEvent,
+  PanResponder,
   Platform,
   StyleSheet,
   TextInput,
@@ -24,27 +25,64 @@ export default function WalletScreen() {
   const { colorScheme } = useThemeController();
   const [amount, setAmount] = useState("");
   
-  // NEW: State to control button visibility
+  // State for UI rendering
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   
+  // Ref to track keyboard state inside the static PanResponder
+  const isKeyboardVisibleRef = useRef(false);
+  
+  // Ref to programmatically focus the input
+  const inputRef = useRef<TextInput>(null);
+
   const insets = useSafeAreaInsets();
   const animatedPadding = useRef(new Animated.Value(insets.bottom)).current;
+
+  // PanResponder to handle swipes
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // Only take over if it's a distinct vertical swipe (> 20px)
+        return Math.abs(gestureState.dy) > 20 && Math.abs(gestureState.dx) < Math.abs(gestureState.dy);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const { dy } = gestureState;
+
+        // SWIPE UP (dy is negative)
+        if (dy < -50) {
+          inputRef.current?.focus();
+        } 
+        // SWIPE DOWN (dy is positive)
+        else if (dy > 50) {
+          // Only trigger cancel/clear if the keyboard is currently open
+          if (isKeyboardVisibleRef.current) {
+            Keyboard.dismiss();
+            setAmount("");
+          }
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
     const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const onShow = (event: KeyboardEvent) => {
-      setKeyboardVisible(true); // Show button immediately when keyboard starts opening
+      setKeyboardVisible(true);
+      isKeyboardVisibleRef.current = true; // Update ref for PanResponder
+      
       Animated.timing(animatedPadding, {
-        toValue: insets.bottom + 290,
+        toValue: insets.bottom + 290, // Adjust this value based on your actual keyboard overlap needs
         duration: 100,
         useNativeDriver: false,
       }).start();
     };
 
     const onHide = (event: KeyboardEvent) => {
-      setKeyboardVisible(false); // Hide button immediately when keyboard starts closing
+      setKeyboardVisible(false);
+      isKeyboardVisibleRef.current = false; // Update ref for PanResponder
+
       Animated.timing(animatedPadding, {
         toValue: insets.bottom,
         duration: 100,
@@ -78,7 +116,7 @@ export default function WalletScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} {...panResponder.panHandlers}>
       <View style={styles.contentContainer}>
         <View style={styles.balanceWrapper}>
           <View
@@ -99,21 +137,18 @@ export default function WalletScreen() {
 
         <Animated.View style={[styles.bottomSection, { paddingBottom: animatedPadding }]}>
           <TextInput
+            ref={inputRef}
             value={amount ? `$${amount}` : ""}
             onChangeText={sanitizeAmount}
             placeholder="$10.00"
             placeholderTextColor={inputPlaceholder}
             keyboardType="numeric"
             inputMode="decimal"
-            // returnKeyType="done"
             blurOnSubmit
             onSubmitEditing={() => Keyboard.dismiss()}
             style={[styles.plainInput, { color: baseText }]}
           />
 
-          {/* Only render the button wrapper if the keyboard is visible. 
-             This acts as "display: hidden" (removing it from layout).
-          */}
           {keyboardVisible && (
             <View style={styles.buttonWrapper}>
               <ThemedButton
@@ -180,7 +215,6 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     width: "100%",
-    // Added a small top margin to separate it from the input visually when it appears
     marginTop: 10,
     marginBottom: 10, 
   },
