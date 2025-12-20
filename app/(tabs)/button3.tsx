@@ -20,7 +20,7 @@ const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.round(width * 0.8);
 
 export default function WalletScreen() {
-  const balance = 100;
+  const balance = 0;
   const { colorScheme } = useThemeController();
   const [amount, setAmount] = useState("");
   
@@ -105,7 +105,7 @@ export default function WalletScreen() {
             placeholderTextColor={inputPlaceholder}
             keyboardType="numeric"
             inputMode="decimal"
-            returnKeyType="done"
+            // returnKeyType="done"
             blurOnSubmit
             onSubmitEditing={() => Keyboard.dismiss()}
             style={[styles.plainInput, { color: baseText }]}
