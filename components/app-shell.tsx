@@ -7,7 +7,8 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Keyboard, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface AppShellProps {
   title: string;
@@ -39,7 +40,12 @@ export function AppShell({ title, children }: AppShellProps) {
     }).start();
   }, [sidebarOpen, translateX]);
 
-  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+  const toggleSidebar = () => {
+    if (!sidebarOpen) {
+      Keyboard.dismiss();
+    }
+    setSidebarOpen((prev) => !prev);
+  };
 
   const panResponder = useRef(
     PanResponder.create({
@@ -111,7 +117,11 @@ export function AppShell({ title, children }: AppShellProps) {
 
   return (
     <ThemedView style={styles.container} {...panResponder.panHandlers}>
-      <Sidebar translateX={translateX} onNavigate={handleNavigate} />
+      <Sidebar
+        translateX={translateX}
+        onNavigate={handleNavigate}
+        panHandlers={panResponder.panHandlers}
+      />
 
       <Animated.View
         style={[styles.mainContent, { transform: [{ translateX }] }]}
@@ -127,14 +137,16 @@ export function AppShell({ title, children }: AppShellProps) {
           />
         </Animated.View>
 
-        <ThemedView style={styles.header}>
-          <TouchableOpacity style={styles.hamburgerButton} onPress={toggleSidebar}>
-            <FontAwesome6 name="bars" size={30} color={iconColor} />
-          </TouchableOpacity>
-          <ThemedText type="title" style={[styles.headerTitle, { color: accent }]}>
-            {title}
-          </ThemedText>
-        </ThemedView>
+        <SafeAreaView edges={["top"]} style={styles.safeArea}> 
+          <ThemedView style={styles.header}>
+            <TouchableOpacity style={styles.hamburgerButton} onPress={toggleSidebar}>
+              <FontAwesome6 name="bars" size={30} color={iconColor} />
+            </TouchableOpacity>
+            <ThemedText type="title" style={[styles.headerTitle, { color: accent }]}> 
+              {title}
+            </ThemedText>
+          </ThemedView>
+        </SafeAreaView>
         <View style={styles.divider} />
 
         <ThemedView style={styles.content}>{children}</ThemedView>
@@ -154,9 +166,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 24,
+    paddingTop: 0,
     paddingHorizontal: 24,
     gap: 12,
+  },
+  safeArea: {
+    backgroundColor: 'transparent',
   },
   headerTitle: {
     fontSize: 28,
@@ -176,7 +191,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: StyleSheet.hairlineWidth,
     backgroundColor: 'rgba(131, 131, 131, 0.66)',
-    marginTop: 16,
+    marginTop: 8,
     marginBottom: 8,
   },
   scrimTouch: {

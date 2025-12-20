@@ -5,15 +5,17 @@ import { FontAwesome6, Octicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 import React from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const SIDEBAR_WIDTH = 280;
 
 type Props = {
   translateX: Animated.Value;
   onNavigate?: (path: Parameters<typeof router.push>[0]) => void;
+  panHandlers?: any;
 };
 
-export default function Sidebar({ translateX, onNavigate }: Props) {
+export default function Sidebar({ translateX, onNavigate, panHandlers }: Props) {
   const pathname = usePathname();
   const { toggle: toggleTheme, colorScheme } = useThemeController();
   const accent =
@@ -45,11 +47,12 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
   };
 
   return (
-    <Animated.View style={[styles.panel, { transform: [{ translateX: slideX }] }] }>
-      <ThemedText type="title">Menu</ThemedText>
-      <ThemedText type="default">All systems go.</ThemedText>
+    <Animated.View {...panHandlers} style={[styles.panel, { transform: [{ translateX: slideX }] }] }>
+      <SafeAreaView {...(panHandlers ?? {})} edges={["top", "bottom"]} style={styles.safeArea}>
+        <ThemedText type="title">Menu</ThemedText>
+        <ThemedText type="default">All systems go.</ThemedText>
 
-      <View style={styles.menuSection}>
+        <View style={styles.menuSection}>
         <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)')}>
           <View style={styles.menuItemContent}>
             <Octicons
@@ -85,7 +88,7 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
             </ThemedText>
           </View>
         </Pressable>
-      </View>
+        </View>
 
       <View style={styles.footerSection}>
         <Pressable style={styles.menuItem} onPress={toggleTheme}>
@@ -137,7 +140,8 @@ export default function Sidebar({ translateX, onNavigate }: Props) {
             </ThemedText>
           </View>
         </Pressable>
-      </View>
+        </View>
+      </SafeAreaView>
     </Animated.View>
   );
 }
@@ -149,10 +153,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     width: SIDEBAR_WIDTH,
-    paddingTop: 48,
+    paddingTop: 0,
     paddingHorizontal: 20,
     gap: 16,
     zIndex: 10,
+  },
+
+  safeArea: {
+    flex: 1,
+    paddingTop: 12,
   },
   menuSection: {
     marginTop: 24,
