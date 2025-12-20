@@ -70,18 +70,18 @@ export default function Sidebar({ translateX, onNavigate, panHandlers }: Props) 
             </ThemedText>
           </View>
         </Pressable>
-        <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/button3')}>
+        <Pressable style={styles.menuItem} onPress={() => handlePress('/(tabs)/wallet')}>
           <View style={styles.menuItemContent}>
             <FontAwesome6
               name="wallet"
               solid
               size={22}
-              color={isActive('/button3') ? accent : baseColor}
+              color={isActive('/wallet') ? accent : baseColor}
             />
             <ThemedText
               style={[
                 styles.menuItemText,
-                isActive('/button3') ? { color: accent } : { color: baseColor },
+                isActive('/wallet') ? { color: accent } : { color: baseColor },
               ]}
             >
               Wallet
