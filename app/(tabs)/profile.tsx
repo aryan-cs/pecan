@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 30,
     marginTop: 10,
   },
   profilePicContainer: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     bottom: -150,
     left: "-25%",
     width: "150%",
-    height: 300,
+    height: 275,
     transform: [{ rotate: "-10deg" }],
   },
 });
