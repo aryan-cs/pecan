@@ -48,16 +48,21 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '100%',
     alignSelf: 'center',
+    padding: -60,
+    // backgroundColor: 'red',
   },
   scrollContent: {
-
+    margin: 0,
+    padding: 0,
   },
   header: {
-    marginBottom: 20,
+    // marginBottom: 20,
     paddingHorizontal: 4,
   },
   section: {
-    marginBottom: 24,
+    // marginBottom: 24,
+    marginTop: 32,
+    padding: 0,
   },
   settingBox: {
     borderRadius: 10,
