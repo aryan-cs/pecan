@@ -33,7 +33,160 @@ export default function SettingsScreen() {
           </View>
 
           <ThemedText style={styles.description}>
-            Adjust the appearance of the application to reduce glare and improve readability in low-light environments.
+            Sensational feature, requires no description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
+          </ThemedText>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={false}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Here's a filler for another setting's description.
           </ThemedText>
           
         </View>
@@ -45,7 +198,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '90%',
+    width: '100%',
     height: '100%',
     alignSelf: 'center',
     padding: -60,
@@ -53,7 +206,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     margin: 0,
-    padding: 0,
+    padding: 20,
   },
   header: {
     // marginBottom: 20,
@@ -61,7 +214,7 @@ const styles = StyleSheet.create({
   },
   section: {
     // marginBottom: 24,
-    marginTop: 32,
+    marginVertical: 16,
     padding: 0,
   },
   settingBox: {
@@ -76,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   description: {
-    marginTop: 10,
+    marginVertical: 10,
     paddingHorizontal: 16,
     fontSize: 13,
     color: '#8E8E93',
