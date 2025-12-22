@@ -4,6 +4,8 @@ import ThemedButton from "@/components/ui/button";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import React, { useEffect, useRef, useState } from "react";
+// 1. Import LinearGradient
+import { LinearGradient } from "expo-linear-gradient";
 import {
   Animated,
   Dimensions,
@@ -26,13 +28,12 @@ export default function WalletScreen() {
   const [amount, setAmount] = useState("");
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-
   const isKeyboardVisibleRef = useRef(false);
-
   const inputRef = useRef<TextInput>(null);
-
   const insets = useSafeAreaInsets();
   const animatedPadding = useRef(new Animated.Value(insets.bottom)).current;
+
+  // ... [PanResponder and useEffect logic remains the same] ...
 
   const panResponder = useRef(
     PanResponder.create({
@@ -45,7 +46,6 @@ export default function WalletScreen() {
       },
       onPanResponderRelease: (_, gestureState) => {
         const { dy } = gestureState;
-
         if (dy < -50) {
           inputRef.current?.focus();
         } else if (dy > 50) {
@@ -67,7 +67,6 @@ export default function WalletScreen() {
     const onShow = (event: KeyboardEvent) => {
       setKeyboardVisible(true);
       isKeyboardVisibleRef.current = true;
-
       Animated.timing(animatedPadding, {
         toValue: insets.bottom + 290,
         duration: 100,
@@ -78,7 +77,6 @@ export default function WalletScreen() {
     const onHide = (event: KeyboardEvent) => {
       setKeyboardVisible(false);
       isKeyboardVisibleRef.current = false;
-
       Animated.timing(animatedPadding, {
         toValue: insets.bottom,
         duration: 100,
@@ -103,7 +101,12 @@ export default function WalletScreen() {
     colorScheme === "dark"
       ? Colors.general.inputPlaceholderDark
       : Colors.general.inputPlaceholderLight;
-  const baseText = Colors[colorScheme === "dark" ? "dark" : "light"].text;
+  
+  const themeColors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const baseText = themeColors.text;
+  // 2. We need the background color to match the fade to the screen background
+  const baseBackground = themeColors.background; 
+
   const accentTranslucent =
     colorScheme === "dark"
       ? "rgba(23, 255, 162, 0.1)"
@@ -154,18 +157,40 @@ export default function WalletScreen() {
         <Animated.View
           style={[styles.bottomSection, { paddingBottom: animatedPadding }]}
         >
-          <TextInput
-            ref={inputRef}
-            value={amount ? `$${amount}` : ""}
-            onChangeText={sanitizeAmount}
-            placeholder="$10.00"
-            placeholderTextColor={inputPlaceholder}
-            keyboardType="numeric"
-            inputMode="decimal"
-            blurOnSubmit
-            onSubmitEditing={() => Keyboard.dismiss()}
-            style={[styles.plainInput, { color: baseText }]}
-          />
+          {/* 3. Wrap TextInput in a relative container */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={inputRef}
+              value={amount ? `$${amount}` : ""}
+              onChangeText={sanitizeAmount}
+              placeholder="$10.00"
+              placeholderTextColor={inputPlaceholder}
+              keyboardType="numeric"
+              inputMode="decimal"
+              blurOnSubmit
+              onSubmitEditing={() => Keyboard.dismiss()}
+              style={[styles.plainInput, { color: baseText }]}
+            />
+            
+            {/* 4. Left Fade Overlay */}
+            <LinearGradient
+              colors={colorScheme === "dark" ? [Colors.dark.background, 'transparent'] : [Colors.light.background, 'rgba(255,255,255,0)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.fadeLeft}
+              pointerEvents="none" 
+            />
+
+            {/* 5. Right Fade Overlay */}
+            <LinearGradient
+              // colors={['transparent', baseBackground]}
+              colors={colorScheme === "dark" ? ['transparent', Colors.dark.background] : ['rgba(255,255,255,0)', Colors.light.background]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.fadeRight}
+              pointerEvents="none"
+            />
+          </View>
 
           {keyboardVisible && (
             <View style={styles.buttonWrapper}>
@@ -218,17 +243,40 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 16,
   },
+  // 6. New Container for Input to hold the relative positioning
+  inputContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 64,
+  },
   plainInput: {
     width: "100%",
-    height: 64,
-    fontSize: 46,
+    height: "100%", // Match container
+    fontSize: 42,
     paddingVertical: 0,
     lineHeight: 52,
-    paddingHorizontal: 8,
+    // paddingHorizontal: 8,
     backgroundColor: "transparent",
     borderWidth: 0,
     textAlign: "center",
     fontFamily: "BBH_Bartle-Regular",
+  },
+  // 7. Styles for the gradients
+  fadeLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 30, // Width of the fade effect
+    zIndex: 1,
+  },
+  fadeRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 30, // Width of the fade effect
+    zIndex: 1,
   },
   buttonWrapper: {
     width: "100%",
