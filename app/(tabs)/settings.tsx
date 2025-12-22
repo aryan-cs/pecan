@@ -1,5 +1,4 @@
 import { ThemedText } from '@/components/themed-text';
-import { BRAND_DARK_MODE } from '@/constants/theme';
 import { useThemeController } from '@/context/theme-context';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
@@ -13,7 +12,7 @@ export default function SettingsScreen() {
 
   const containerColor = isDark ? '#1C1C1E' : '#FFFFFF';
   
-  const activeSwitchColor = BRAND_DARK_MODE; 
+  const activeSwitchColor = 'BRAND_DARK_MODE'; 
 
   return (
     <SafeAreaView style={styles.container}>

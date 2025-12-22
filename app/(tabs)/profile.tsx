@@ -26,6 +26,7 @@ const STAT_LABELS = [
   "Earned",
   "Lost",
 ];
+const PROFILE_PIC_SIZE = 150;
 
 export default function ProfileScreen() {
   const { colorScheme } = useThemeController();
@@ -36,6 +37,13 @@ export default function ProfileScreen() {
     : Colors.general.brandLightMode;
   const profileIconColor = isDark ? "#3A3A3C" : "#E5E5EA";
   const subTextColor = "#8E8E93";
+
+  // Format today's date
+  const today = new Date().toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
 
   const [imageUri, setImageUri] = useState(null);
 
@@ -135,6 +143,10 @@ export default function ProfileScreen() {
             <ThemedText type="title" style={styles.username}>
               @TheGoat
             </ThemedText>
+            {/* NEW SUBTEXT ADDED HERE */}
+            <ThemedText style={[styles.userSubtext, { color: subTextColor }]}>
+              Winning since {today}.
+            </ThemedText>
           </View>
         </View>
 
@@ -170,13 +182,13 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 50,
-    marginTop: 20,
+    marginBottom: 10,
+    marginTop: 10,
   },
   profilePicContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: PROFILE_PIC_SIZE,
+    height: PROFILE_PIC_SIZE,
+    borderRadius: 20,
     overflow: "visible",
     justifyContent: "center",
     alignItems: "center",
@@ -184,15 +196,15 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: PROFILE_PIC_SIZE,
+    height: PROFILE_PIC_SIZE,
+    borderRadius: 20,
   },
   editBadge: {
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#868686ff",
+    bottom: 5,
+    right: 5,
+    backgroundColor: "#a7a7a7ff",
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -207,6 +219,11 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 28,
     fontWeight: "bold",
+  },
+  userSubtext: {
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: '500',
   },
   statsGrid: {
     flexDirection: "row",
