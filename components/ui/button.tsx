@@ -31,10 +31,11 @@ export default function ThemedButton({
   return (
     <Pressable
       onPress={onPress}
-      style={[
+      style={({ pressed }) => [
         styles.button,
         filled ? { backgroundColor: bg } : { backgroundColor: "transparent" },
         fullWidth ? styles.fullWidth : undefined,
+        { opacity: pressed ? 0.7 : 1 },
         style,
       ]}
     >

@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import GroupEntry from "@/components/ui/group-entry";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -32,16 +33,21 @@ const DURATIONS = [
 export default function HomeScreen() {
   const { colorScheme } = useThemeController();
   const insets = useSafeAreaInsets();
-
-  // 1. Control visibility separately from the animation
   const [modalVisible, setModalVisible] = useState(false);
-  
-  // 2. Animation Value: 0 = Hidden, 1 = Visible
   const animValue = useRef(new Animated.Value(0)).current;
 
   const [name, setName] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(DURATIONS[0]);
   const [customDate, setCustomDate] = useState(new Date());
+
+  const [groups, setGroups] = useState<
+    {
+      id: string;
+      name: string;
+      duration: string;
+      createdAt: number;
+    }[]
+  >([]);
 
   const accent =
     colorScheme === "dark"
@@ -52,7 +58,6 @@ export default function HomeScreen() {
   const placeholderColor = colorScheme === "dark" ? "#8e8e93" : "#aeaeb2";
   const modalBg = colorScheme === "dark" ? "#000" : "#fff";
 
-  // 3. Helper to open modal with animation
   const openModal = () => {
     setModalVisible(true);
     Animated.timing(animValue, {
@@ -62,14 +67,12 @@ export default function HomeScreen() {
     }).start();
   };
 
-  // 4. Helper to close modal with animation
   const closeModal = () => {
     Animated.timing(animValue, {
       toValue: 0,
       duration: 250,
       useNativeDriver: true,
     }).start(() => {
-      // Only hide the modal view AFTER animation completes
       setModalVisible(false);
     });
   };
@@ -87,28 +90,49 @@ export default function HomeScreen() {
         ? customDate.toISOString()
         : selectedDuration;
 
-    console.log({ name, duration: finalDuration });
+    const newGroup = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      duration: finalDuration,
+      createdAt: Date.now(),
+    };
+
+    setGroups((prev) => [newGroup, ...prev]);
     closeModal();
     setName("");
     setSelectedDuration(DURATIONS[0]);
   };
 
-  // 5. Interpolate animations
   const backdropOpacity = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.5], // Fades from 0 to 0.5 opacity
+    outputRange: [0, 0.5],
   });
-
   const slideUp = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [SCREEN_HEIGHT, 0], // Slides from bottom (offscreen) to 0
+    outputRange: [SCREEN_HEIGHT, 0],
   });
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.tagline}>
-        Making "I told you so" just a little bit sweeter.
-      </ThemedText>
+      <ScrollView
+        style={{ width: "100%", marginTop: 0, paddingTop: 18 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
+        {groups.length === 0 ? (
+          <ThemedText style={{ textAlign: "center", opacity: 0.6 }}>
+            No groups yet — tap + to create one.
+          </ThemedText>
+        ) : (
+          groups.map((g) => (
+            <GroupEntry
+              key={g.id}
+              name={g.name}
+              duration={g.duration}
+              createdAt={g.createdAt}
+            />
+          ))
+        )}
+      </ScrollView>
 
       <Pressable
         style={[
@@ -124,31 +148,24 @@ export default function HomeScreen() {
       <Modal
         visible={modalVisible}
         transparent={true}
-        // 6. Disable default slide so we can control it manually
-        animationType="none" 
+        animationType="none"
         onRequestClose={closeModal}
       >
         <View style={styles.modalOverlay}>
-          {/* 7. Animated Backdrop: Fades in independently */}
-          <Animated.View 
-            style={[
-              styles.backdrop, 
-              { opacity: backdropOpacity }
-            ]} 
+          <Animated.View
+            style={[styles.backdrop, { opacity: backdropOpacity }]}
           >
             <Pressable style={{ flex: 1 }} onPress={closeModal} />
           </Animated.View>
 
-          {/* 8. Animated Content: Slides up independently */}
           <Animated.View
             style={[
               styles.modalContentWrapper,
-              { 
+              {
                 transform: [{ translateY: slideUp }],
-                // Make sure this sits roughly at the bottom
-                justifyContent: "flex-end", 
+                justifyContent: "flex-end",
                 flex: 1,
-                pointerEvents: "box-none" // Lets clicks pass through empty space to backdrop
+                pointerEvents: "box-none",
               },
             ]}
           >
@@ -250,13 +267,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingVertical: 24,
+    paddingVertical: 0,
+    margin: 0,
     justifyContent: "center",
     alignItems: "center",
-  },
-  tagline: {
-    textAlign: "center",
-    fontSize: 20,
   },
   fab: {
     position: "absolute",
@@ -274,18 +288,13 @@ const styles = StyleSheet.create({
     elevation: 6,
     zIndex: 10,
   },
-  modalOverlay: {
-    flex: 1,
-    // No background color here!
-  },
+  modalOverlay: { flex: 1 },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#000",
     zIndex: 1,
   },
-  modalContentWrapper: {
-    zIndex: 2,
-  },
+  modalContentWrapper: { zIndex: 2 },
   modalContent: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -303,18 +312,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  formContainer: {
-    gap: 12,
-  },
-  inputGroup: {
-    gap: 12,
-  },
-  label: {
-    fontSize: 14,
-    opacity: 0.7,
-    fontWeight: "600",
-    marginLeft: 4,
-  },
+  formContainer: { gap: 12 },
+  inputGroup: { gap: 12 },
+  label: { fontSize: 14, opacity: 0.7, fontWeight: "600", marginLeft: 4 },
   inputWrapper: {
     height: 50,
     borderRadius: 12,
@@ -327,11 +327,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     textAlignVertical: "center",
   },
-  chipContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
+  chipContainer: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -345,9 +341,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  saveButtonText: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: "#0e0e0e",
-  },
+  saveButtonText: { fontSize: 17, fontWeight: "bold", color: "#0e0e0e" },
 });
