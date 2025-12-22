@@ -15,6 +15,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   TextInput,
   View,
 } from "react-native";
@@ -35,12 +36,14 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const animValue = useRef(new Animated.Value(0)).current;
-  const fabColor = colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
-
+  const fabColor =
+    colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
 
   const [name, setName] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(DURATIONS[0]);
   const [customDate, setCustomDate] = useState(new Date());
+
+  const [startImmediately, setStartImmediately] = useState(false);
 
   const [groups, setGroups] = useState<
     {
@@ -48,6 +51,7 @@ export default function HomeScreen() {
       name: string;
       duration: string;
       createdAt: number;
+      active: boolean;
     }[]
   >([]);
 
@@ -76,6 +80,9 @@ export default function HomeScreen() {
       useNativeDriver: true,
     }).start(() => {
       setModalVisible(false);
+      setName("");
+      setSelectedDuration(DURATIONS[0]);
+      setStartImmediately(false);
     });
   };
 
@@ -97,12 +104,11 @@ export default function HomeScreen() {
       name: name.trim(),
       duration: finalDuration,
       createdAt: Date.now(),
+      active: startImmediately,
     };
 
     setGroups((prev) => [newGroup, ...prev]);
     closeModal();
-    setName("");
-    setSelectedDuration(DURATIONS[0]);
   };
 
   const backdropOpacity = animValue.interpolate({
@@ -117,7 +123,12 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={{ width: "100%", marginTop: 0, paddingTop: 18, paddingHorizontal: 24 }}
+        style={{
+          width: "100%",
+          marginTop: 0,
+          paddingTop: 18,
+          paddingHorizontal: 24,
+        }}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         {groups.length === 0 ? (
@@ -131,6 +142,7 @@ export default function HomeScreen() {
               name={g.name}
               duration={g.duration}
               createdAt={g.createdAt}
+              active={g.active}
             />
           ))
         )}
@@ -245,6 +257,19 @@ export default function HomeScreen() {
                     </View>
                   </View>
 
+                  <View style={[styles.inputGroup, styles.toggleRow]}>
+                    <ThemedText style={styles.label}>
+                      Start immediately?
+                    </ThemedText>
+                    <Switch
+                      trackColor={{ false: inputBg, true: accent }}
+                      thumbColor={"#fff"}
+                      ios_backgroundColor={inputBg}
+                      onValueChange={setStartImmediately}
+                      value={startImmediately}
+                    />
+                  </View>
+
                   <View style={{ marginTop: 8 }}>
                     <Pressable
                       style={[styles.saveButton, { backgroundColor: accent }]}
@@ -314,8 +339,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  formContainer: { gap: 12 },
+  formContainer: { gap: 20 },
   inputGroup: { gap: 12 },
+  toggleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   label: { fontSize: 14, opacity: 0.7, fontWeight: "600", marginLeft: 4 },
   inputWrapper: {
     height: 50,
