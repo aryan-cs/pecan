@@ -3,9 +3,11 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
+  Animated,
+  Dimensions,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -18,6 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const FAB_SIZE = 64;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 const DURATIONS = [
   "5 minutes",
   "30 minutes",
@@ -29,10 +32,15 @@ const DURATIONS = [
 export default function HomeScreen() {
   const { colorScheme } = useThemeController();
   const insets = useSafeAreaInsets();
+
+  // 1. Control visibility separately from the animation
   const [modalVisible, setModalVisible] = useState(false);
+  
+  // 2. Animation Value: 0 = Hidden, 1 = Visible
+  const animValue = useRef(new Animated.Value(0)).current;
+
   const [name, setName] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(DURATIONS[0]);
-
   const [customDate, setCustomDate] = useState(new Date());
 
   const accent =
@@ -43,6 +51,28 @@ export default function HomeScreen() {
   const inputBg = colorScheme === "dark" ? "#1c1c1e" : "#f2f2f7";
   const placeholderColor = colorScheme === "dark" ? "#8e8e93" : "#aeaeb2";
   const modalBg = colorScheme === "dark" ? "#000" : "#fff";
+
+  // 3. Helper to open modal with animation
+  const openModal = () => {
+    setModalVisible(true);
+    Animated.timing(animValue, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // 4. Helper to close modal with animation
+  const closeModal = () => {
+    Animated.timing(animValue, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      // Only hide the modal view AFTER animation completes
+      setModalVisible(false);
+    });
+  };
 
   const handleSave = () => {
     if (!name.trim()) {
@@ -58,10 +88,21 @@ export default function HomeScreen() {
         : selectedDuration;
 
     console.log({ name, duration: finalDuration });
-    setModalVisible(false);
+    closeModal();
     setName("");
     setSelectedDuration(DURATIONS[0]);
   };
+
+  // 5. Interpolate animations
+  const backdropOpacity = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.5], // Fades from 0 to 0.5 opacity
+  });
+
+  const slideUp = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [SCREEN_HEIGHT, 0], // Slides from bottom (offscreen) to 0
+  });
 
   return (
     <ThemedView style={styles.container}>
@@ -75,108 +116,130 @@ export default function HomeScreen() {
           { backgroundColor: accent, bottom: insets.bottom + 24 },
         ]}
         hitSlop={12}
-        onPress={() => setModalVisible(true)}
+        onPress={openModal}
       >
         <FontAwesome6 name="plus" size={22} color="#0e0e0e" />
       </Pressable>
 
       <Modal
-        animationType="slide"
-        transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        transparent={true}
+        // 6. Disable default slide so we can control it manually
+        animationType="none" 
+        onRequestClose={closeModal}
       >
         <View style={styles.modalOverlay}>
-          <Pressable
-            style={styles.dismissArea}
-            onPress={() => setModalVisible(false)}
-          />
-
-          <View
+          {/* 7. Animated Backdrop: Fades in independently */}
+          <Animated.View 
             style={[
-              styles.modalContent,
-              { backgroundColor: modalBg, height: "90%" },
+              styles.backdrop, 
+              { opacity: backdropOpacity }
+            ]} 
+          >
+            <Pressable style={{ flex: 1 }} onPress={closeModal} />
+          </Animated.View>
+
+          {/* 8. Animated Content: Slides up independently */}
+          <Animated.View
+            style={[
+              styles.modalContentWrapper,
+              { 
+                transform: [{ translateY: slideUp }],
+                // Make sure this sits roughly at the bottom
+                justifyContent: "flex-end", 
+                flex: 1,
+                pointerEvents: "box-none" // Lets clicks pass through empty space to backdrop
+              },
             ]}
           >
-            <View style={styles.modalHeader}>
-              <ThemedText type="subtitle">New Group</ThemedText>
-              <Pressable onPress={() => setModalVisible(false)} hitSlop={10}>
-                <Ionicons name="close" size={24} color={textColor} />
-              </Pressable>
-            </View>
-
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : undefined}
-              style={{ flex: 1 }}
-              keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: modalBg, height: "90%" },
+              ]}
             >
-              <ScrollView
-                bounces={false}
-                contentContainerStyle={[
-                  styles.formContainer,
-                  { paddingBottom: insets.bottom + 20 },
-                ]}
+              <View style={styles.modalHeader}>
+                <ThemedText type="subtitle">New Group</ThemedText>
+                <Pressable onPress={closeModal} hitSlop={10}>
+                  <Ionicons name="close" size={24} color={textColor} />
+                </Pressable>
+              </View>
+
+              <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
               >
-                <View style={styles.inputGroup}>
-                  <ThemedText style={styles.label}>Name</ThemedText>
-                  <View
-                    style={[styles.inputWrapper, { backgroundColor: inputBg }]}
-                  >
-                    <TextInput
-                      style={[styles.input, { color: textColor }]}
-                      // theres some weird alignment issues going on here with the placeholder
-                      // placeholder="Funky group name here..."
-                      placeholderTextColor={placeholderColor}
-                      value={name}
-                      onChangeText={setName}
-                      autoFocus
-                      textAlignVertical="center"
-                      // includeFontPadding={false}
-                    />
+                <ScrollView
+                  bounces={false}
+                  contentContainerStyle={[
+                    styles.formContainer,
+                    { paddingBottom: insets.bottom + 20 },
+                  ]}
+                >
+                  <View style={styles.inputGroup}>
+                    <ThemedText style={styles.label}>Name</ThemedText>
+                    <View
+                      style={[
+                        styles.inputWrapper,
+                        { backgroundColor: inputBg },
+                      ]}
+                    >
+                      <TextInput
+                        style={[styles.input, { color: textColor }]}
+                        placeholderTextColor={placeholderColor}
+                        value={name}
+                        onChangeText={setName}
+                        autoFocus
+                        textAlignVertical="center"
+                      />
+                    </View>
                   </View>
-                </View>
 
-                <View style={styles.inputGroup}>
-                  <ThemedText style={styles.label}>Duration</ThemedText>
-                  <View style={styles.chipContainer}>
-                    {DURATIONS.map((duration) => {
-                      const isSelected = selectedDuration === duration;
-                      return (
-                        <Pressable
-                          key={duration}
-                          style={[
-                            styles.chip,
-                            { backgroundColor: isSelected ? accent : inputBg },
-                          ]}
-                          onPress={() => setSelectedDuration(duration)}
-                        >
-                          <ThemedText
-                            style={{
-                              color: isSelected ? "#000" : textColor,
-                              fontWeight: isSelected ? "600" : "400",
-                            }}
+                  <View style={styles.inputGroup}>
+                    <ThemedText style={styles.label}>Duration</ThemedText>
+                    <View style={styles.chipContainer}>
+                      {DURATIONS.map((duration) => {
+                        const isSelected = selectedDuration === duration;
+                        return (
+                          <Pressable
+                            key={duration}
+                            style={[
+                              styles.chip,
+                              {
+                                backgroundColor: isSelected ? accent : inputBg,
+                              },
+                            ]}
+                            onPress={() => setSelectedDuration(duration)}
                           >
-                            {duration}
-                          </ThemedText>
-                        </Pressable>
-                      );
-                    })}
+                            <ThemedText
+                              style={{
+                                color: isSelected ? "#000" : textColor,
+                                fontWeight: isSelected ? "600" : "400",
+                              }}
+                            >
+                              {duration}
+                            </ThemedText>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
                   </View>
-                </View>
 
-                <View style={{ marginTop: 8 }}>
-                  <Pressable
-                    style={[styles.saveButton, { backgroundColor: accent }]}
-                    onPress={handleSave}
-                  >
-                    <ThemedText style={styles.saveButtonText}>
-                      Create
-                    </ThemedText>
-                  </Pressable>
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </View>
+                  <View style={{ marginTop: 8 }}>
+                    <Pressable
+                      style={[styles.saveButton, { backgroundColor: accent }]}
+                      onPress={handleSave}
+                    >
+                      <ThemedText style={styles.saveButtonText}>
+                        Create
+                      </ThemedText>
+                    </Pressable>
+                  </View>
+                </ScrollView>
+              </KeyboardAvoidingView>
+            </View>
+          </Animated.View>
         </View>
       </Modal>
     </ThemedView>
@@ -213,11 +276,15 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    // No background color here!
   },
-  dismissArea: {
-    flex: 1,
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#000",
+    zIndex: 1,
+  },
+  modalContentWrapper: {
+    zIndex: 2,
   },
   modalContent: {
     borderTopLeftRadius: 24,
