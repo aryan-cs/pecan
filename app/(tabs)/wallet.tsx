@@ -3,9 +3,8 @@ import { ThemedView } from "@/components/themed-view";
 import ThemedButton from "@/components/ui/button";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
-import React, { useEffect, useRef, useState } from "react";
-// 1. Import LinearGradient
 import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -33,7 +32,6 @@ export default function WalletScreen() {
   const insets = useSafeAreaInsets();
   const animatedPadding = useRef(new Animated.Value(insets.bottom)).current;
 
-  // ... [PanResponder and useEffect logic remains the same] ...
 
   const panResponder = useRef(
     PanResponder.create({
@@ -104,7 +102,6 @@ export default function WalletScreen() {
   
   const themeColors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const baseText = themeColors.text;
-  // 2. We need the background color to match the fade to the screen background
   const baseBackground = themeColors.background; 
 
   const accentTranslucent =
@@ -157,7 +154,6 @@ export default function WalletScreen() {
         <Animated.View
           style={[styles.bottomSection, { paddingBottom: animatedPadding }]}
         >
-          {/* 3. Wrap TextInput in a relative container */}
           <View style={styles.inputContainer}>
             <TextInput
               ref={inputRef}
@@ -172,19 +168,16 @@ export default function WalletScreen() {
               style={[styles.plainInput, { color: baseText }]}
             />
             
-            {/* 4. Left Fade Overlay */}
             <LinearGradient
-              colors={colorScheme === "dark" ? [Colors.dark.background, 'transparent'] : [Colors.light.background, 'rgba(255,255,255,0)']}
+              colors={colorScheme === "dark" ? [Colors.dark.background, 'rgba(17, 17, 17, 0)'] : [Colors.light.background, 'rgba(255,255,255,0)']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.fadeLeft}
               pointerEvents="none" 
             />
 
-            {/* 5. Right Fade Overlay */}
             <LinearGradient
-              // colors={['transparent', baseBackground]}
-              colors={colorScheme === "dark" ? ['transparent', Colors.dark.background] : ['rgba(255,255,255,0)', Colors.light.background]}
+              colors={colorScheme === "dark" ? ['rgba(17, 17, 17, 0)', Colors.dark.background] : ['rgba(255,255,255,0)', Colors.light.background]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.fadeRight}
@@ -243,7 +236,6 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 16,
   },
-  // 6. New Container for Input to hold the relative positioning
   inputContainer: {
     position: 'relative',
     width: '100%',
@@ -251,23 +243,21 @@ const styles = StyleSheet.create({
   },
   plainInput: {
     width: "100%",
-    height: "100%", // Match container
+    height: "100%",
     fontSize: 42,
     paddingVertical: 0,
     lineHeight: 52,
-    // paddingHorizontal: 8,
     backgroundColor: "transparent",
     borderWidth: 0,
     textAlign: "center",
     fontFamily: "BBH_Bartle-Regular",
   },
-  // 7. Styles for the gradients
   fadeLeft: {
     position: 'absolute',
     left: 0,
     top: 0,
     bottom: 0,
-    width: 30, // Width of the fade effect
+    width: 30,
     zIndex: 1,
   },
   fadeRight: {
@@ -275,7 +265,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    width: 30, // Width of the fade effect
+    width: 30,
     zIndex: 1,
   },
   buttonWrapper: {

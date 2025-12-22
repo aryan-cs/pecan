@@ -21,7 +21,9 @@ export default function Sidebar({
   panHandlers,
 }: Props) {
   const pathname = usePathname();
-  const { toggle: toggleTheme, colorScheme } = useThemeController();
+  const { colorScheme } = useThemeController();
+  
+  // Theme styling helpers
   const accent =
     colorScheme === "dark"
       ? Colors.general.brandDarkMode
@@ -109,19 +111,8 @@ export default function Sidebar({
         </View>
 
         <View style={styles.footerSection}>
-          <Pressable style={styles.menuItem} onPress={toggleTheme}>
-            <View style={styles.menuItemContent}>
-              <FontAwesome6
-                name="circle-half-stroke"
-                size={22}
-                color={accent}
-                solid
-              />
-              <ThemedText style={styles.menuItemText}>
-                Switch to {colorScheme === "dark" ? "Light" : "Dark"}
-              </ThemedText>
-            </View>
-          </Pressable>
+          {/* Dark Mode toggle removed from here */}
+          
           <Pressable
             style={styles.menuItem}
             onPress={() => handlePress("/(tabs)/settings")}
@@ -186,7 +177,6 @@ const styles = StyleSheet.create({
     gap: 16,
     zIndex: 10,
   },
-
   safeArea: {
     flex: 1,
     paddingTop: 12,

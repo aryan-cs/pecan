@@ -156,9 +156,11 @@ export function AppShell({ title, children }: AppShellProps) {
             </ThemedText>
           </ThemedView>
         </SafeAreaView>
+
         <View style={styles.divider} />
 
         <ThemedView style={styles.content}>{children}</ThemedView>
+
       </Animated.View>
     </ThemedView>
   );
@@ -201,17 +203,14 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: "rgba(131, 131, 131, 0.66)",
     marginTop: 8,
-    marginBottom: 8,
   },
   scrimTouch: {
     flex: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
     gap: 8,
+    // backgroundColor: 'red',
   },
   hamburgerButton: {
     padding: 4,
