@@ -4,7 +4,7 @@ import React from "react";
 
 function getTitle(pathname: string) {
   if (pathname === "/" || pathname === "/(tabs)" || pathname === "/(tabs)/")
-    return "Aspen";
+    return "Pecan";
   if (pathname === "/button1" || pathname === "/(tabs)/button1")
     return "Button 1";
   if (pathname === "/wallet" || pathname === "/(tabs)/wallet") return "Wallet";
@@ -12,7 +12,7 @@ function getTitle(pathname: string) {
     return "Settings";
   if (pathname === "/profile" || pathname === "/(tabs)/profile")
     return "Profile";
-  return "Aspen";
+  return "Pecan";
 }
 
 export default function TabLayout() {
