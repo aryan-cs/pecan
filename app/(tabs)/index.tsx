@@ -115,7 +115,7 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={{ width: "100%", marginTop: 0, paddingTop: 18 }}
+        style={{ width: "100%", marginTop: 0, paddingTop: 18, paddingHorizontal: 24 }}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         {groups.length === 0 ? (
@@ -266,7 +266,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 0,
     paddingVertical: 0,
     margin: 0,
     justifyContent: "center",
