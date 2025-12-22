@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   name: {
     fontStyle: 'italic',
     fontSize: 20,
+    marginLeft: 4,
   },
   duration: {
     fontSize: 15,
