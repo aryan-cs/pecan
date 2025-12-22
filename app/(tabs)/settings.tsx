@@ -1,9 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
 import { BRAND_DARK_MODE } from '@/constants/theme';
 import { useThemeController } from '@/context/theme-context';
+import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
-import { ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function SettingsScreen() {
   const { toggle, colorScheme } = useThemeController();
@@ -18,6 +20,23 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
         <View style={styles.section}>
+
+          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+            <View style={styles.row}>
+              <ThemedText style={{ fontSize: 17 }}>Developer Mode</ThemedText>
+              <Switch
+                trackColor={{ false: '#767577', true: activeSwitchColor }}
+                thumbColor={'#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {}}
+                value={true}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.description}>
+            Big things under way.
+          </ThemedText>
           
           <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
             <View style={styles.row}>
@@ -38,7 +57,7 @@ export default function SettingsScreen() {
 
           <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
             <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
+              <ThemedText style={{ fontSize: 17 }}>Push Notifications</ThemedText>
               <Switch
                 trackColor={{ false: '#767577', true: activeSwitchColor }}
                 thumbColor={'#f4f3f4'}
@@ -50,144 +69,39 @@ export default function SettingsScreen() {
           </View>
 
           <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
+            We promise we won't spam you like a crazy ex. [NOT YET IMPLEMENTED]
           </ThemedText>
 
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
+          <View>
+          <Pressable 
+            onPress={() => {}}
+            style={({ pressed }) => [
+              styles.settingBox, 
+              { backgroundColor: containerColor, opacity: pressed ? 0.7 : 1 }
+            ]}
+          >
             <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
+              <ThemedText style={{ fontSize: 17 }}>Report an Error</ThemedText>
+              <FontAwesome6 name="chevron-right" size={14} color="#8E8E93" />
             </View>
-          </View>
+          </Pressable>
+          <ThemedText style={styles.description}>Found a bug? Let us know. [NOT YET IMPLEMENTED]</ThemedText>
+        </View>
 
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
-
-          <View style={[styles.settingBox, { backgroundColor: containerColor }]}>
-            <View style={styles.row}>
-              <ThemedText style={{ fontSize: 17 }}>Another Setting</ThemedText>
-              <Switch
-                trackColor={{ false: '#767577', true: activeSwitchColor }}
-                thumbColor={'#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {}}
-                value={false}
-              />
-            </View>
-          </View>
-
-          <ThemedText style={styles.description}>
-            Here's a filler for another setting's description.
-          </ThemedText>
+        <View>
+          <Pressable 
+            onPress={() => console.log("Logging out...")}
+            style={({ pressed }) => [
+              styles.settingBox, 
+              { backgroundColor: containerColor, opacity: pressed ? 0.7 : 1, alignItems: 'center' }
+            ]}
+          >
+            <ThemedText style={{ fontSize: 17, color: '#FF3B30', fontWeight: '500' }}>
+              Log Out
+            </ThemedText>
+          </Pressable>
+          <ThemedText style={styles.description}>Log out of your account. [NOT YET IMPLEMENTED]</ThemedText>
+        </View>          
           
         </View>
       </ScrollView>
@@ -220,7 +134,7 @@ const styles = StyleSheet.create({
   settingBox: {
     borderRadius: 10,
     overflow: 'hidden',
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 16,
   },
   row: {
@@ -229,7 +143,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   description: {
-    marginVertical: 10,
+    marginTop: 8,
+    marginBottom: 18,
     paddingHorizontal: 16,
     fontSize: 13,
     color: '#8E8E93',

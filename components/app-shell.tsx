@@ -47,6 +47,12 @@ export function AppShell({ title, children }: AppShellProps) {
     }).start();
   }, [sidebarOpen, translateX]);
 
+  useEffect(() => {
+    if (sidebarOpen) {
+      Keyboard.dismiss();
+    }
+  }, [sidebarOpen]);
+
   const toggleSidebar = () => {
     if (!sidebarOpen) {
       Keyboard.dismiss();
