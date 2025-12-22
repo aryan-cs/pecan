@@ -35,6 +35,8 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const animValue = useRef(new Animated.Value(0)).current;
+  const fabColor = colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
+
 
   const [name, setName] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(DURATIONS[0]);
@@ -142,7 +144,7 @@ export default function HomeScreen() {
         hitSlop={12}
         onPress={openModal}
       >
-        <FontAwesome6 name="plus" size={22} color="#0e0e0e" />
+        <FontAwesome6 name="plus" size={22} color={fabColor} />
       </Pressable>
 
       <Modal
