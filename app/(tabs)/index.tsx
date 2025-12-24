@@ -1,9 +1,10 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import GroupEntry from "@/components/ui/group-entry";
+import { ThemedText } from "@/components/ui/themed-text";
+import { ThemedView } from "@/components/ui/themed-view";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Alert,
@@ -32,28 +33,37 @@ const DURATIONS = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   const { colorScheme } = useThemeController();
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const animValue = useRef(new Animated.Value(0)).current;
-  const fabColor =
-    colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
+  const fabColor = colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
 
   const [name, setName] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(DURATIONS[0]);
   const [customDate, setCustomDate] = useState(new Date());
-
+  
   const [startImmediately, setStartImmediately] = useState(false);
 
+  // UPDATED: Initial state now includes the hardcoded "Test Event"
   const [groups, setGroups] = useState<
     {
       id: string;
       name: string;
       duration: string;
       createdAt: number;
-      active: boolean;
+      active: boolean; 
     }[]
-  >([]);
+  >([
+    {
+      id: "hardcoded-test-1",
+      name: "Test Event",
+      duration: "1 day",
+      createdAt: Date.now(), // Sets creation time to "now" so it starts full
+      active: true,
+    }
+  ]);
 
   const accent =
     colorScheme === "dark"
@@ -104,7 +114,7 @@ export default function HomeScreen() {
       name: name.trim(),
       duration: finalDuration,
       createdAt: Date.now(),
-      active: startImmediately,
+      active: startImmediately, 
     };
 
     setGroups((prev) => [newGroup, ...prev]);
@@ -123,12 +133,7 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={{
-          width: "100%",
-          marginTop: 0,
-          paddingTop: 18,
-          paddingHorizontal: 24,
-        }}
+        style={{ width: "100%", marginTop: 0, paddingTop: 18, paddingHorizontal: 24 }}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         {groups.length === 0 ? (
@@ -143,6 +148,18 @@ export default function HomeScreen() {
               duration={g.duration}
               createdAt={g.createdAt}
               active={g.active}
+              onPress={() => {
+                router.push({
+                  pathname: "/item/[id]",
+                  params: { 
+                    id: g.id, 
+                    name: g.name, 
+                    duration: g.duration, 
+                    createdAt: g.createdAt.toString(), 
+                    active: g.active.toString()
+                  }
+                });
+              }}
             />
           ))
         )}
@@ -258,15 +275,13 @@ export default function HomeScreen() {
                   </View>
 
                   <View style={[styles.inputGroup, styles.toggleRow]}>
-                    <ThemedText style={styles.label}>
-                      Start immediately?
-                    </ThemedText>
+                    <ThemedText style={styles.label}>Start immediately?</ThemedText>
                     <Switch
-                      trackColor={{ false: inputBg, true: accent }}
-                      thumbColor={"#fff"}
-                      ios_backgroundColor={inputBg}
-                      onValueChange={setStartImmediately}
-                      value={startImmediately}
+                        trackColor={{ false: inputBg, true: accent }}
+                        thumbColor={"#fff"}
+                        ios_backgroundColor={inputBg}
+                        onValueChange={setStartImmediately}
+                        value={startImmediately}
                     />
                   </View>
 
@@ -342,9 +357,9 @@ const styles = StyleSheet.create({
   formContainer: { gap: 20 },
   inputGroup: { gap: 12 },
   toggleRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: { fontSize: 14, opacity: 0.7, fontWeight: "600", marginLeft: 4 },
   inputWrapper: {

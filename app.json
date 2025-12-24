@@ -1,6 +1,7 @@
 {
   "expo": {
-    "name": "pecan",
+    "name": "Pecan",
+    "description": "Pronounced \"pee-can\"; not to be confused with God's gift to man, the greatest mix-in of all time, the Pecan. Making \"I told you so\" just a little bit sweeter.",
     "slug": "pecan",
     "version": "1.0.0",
     "orientation": "portrait",

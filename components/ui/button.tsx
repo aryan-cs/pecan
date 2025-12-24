@@ -1,4 +1,4 @@
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import React from "react";

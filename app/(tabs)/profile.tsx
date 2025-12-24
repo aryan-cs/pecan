@@ -1,4 +1,4 @@
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import { FontAwesome6 } from "@expo/vector-icons";

@@ -1,6 +1,6 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import ThemedButton from "@/components/ui/button";
+import { ThemedText } from "@/components/ui/themed-text";
+import { ThemedView } from "@/components/ui/themed-view";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
 import { LinearGradient } from "expo-linear-gradient";
