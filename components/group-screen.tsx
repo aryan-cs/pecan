@@ -42,6 +42,8 @@ export default function GroupScreen() {
   const duration = typeof params.duration === "string" ? params.duration : "";
   const active = params.active === "true";
 
+  const eventDuration = duration || "Long term";
+
   const createdAtTimestamp =
     typeof params.createdAt === "string"
       ? parseInt(params.createdAt, 10)
@@ -124,7 +126,7 @@ export default function GroupScreen() {
           </ThemedText>
 
           <ThemedText style={[styles.dateText, { color: subTextColor }]}>
-            Group created on {createdDate}.
+            {eventDuration} event created on {createdDate}.
           </ThemedText>
         </View>
 

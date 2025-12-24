@@ -58,7 +58,7 @@ export default function HomeScreen() {
   >([
     {
       id: "hardcoded-test-1",
-      name: "Test Event",
+      name: "Isla Nublar",
       duration: "1 day",
       createdAt: Date.now(), // Sets creation time to "now" so it starts full
       active: true,
