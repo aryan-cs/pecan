@@ -13,8 +13,8 @@ import {
 import { Swipeable } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ITEM_HEIGHT = 120; // Matches the height in styles
-const MARGIN_BOTTOM = 16; // Matches the marginBottom in styles
+const ITEM_HEIGHT = 120;
+const MARGIN_BOTTOM = 16;
 
 interface GroupEntryProps {
   id?: string;
@@ -24,7 +24,6 @@ interface GroupEntryProps {
   active: boolean;
   onPress?: () => void;
   onLeave?: () => void;
-  // New props for animation coordination
   isDeleting?: boolean;
   onDeleteAnimationComplete?: () => void;
 }
@@ -46,7 +45,6 @@ export default function GroupEntry({
   );
   const [timeLeft, setTimeLeft] = useState("");
 
-  // Animation Values
   const translateX = useRef(new Animated.Value(0)).current;
   const itemHeight = useRef(new Animated.Value(ITEM_HEIGHT)).current;
   const itemMarginBottom = useRef(new Animated.Value(MARGIN_BOTTOM)).current;
@@ -54,18 +52,15 @@ export default function GroupEntry({
   const SLIDE_OUT_DURATION = 250;
   const SLIDE_UP_DURATION = SLIDE_OUT_DURATION - 50;
 
-  // -- DELETION ANIMATION LOGIC --
   useEffect(() => {
     if (isDeleting) {
       Animated.sequence([
-        // 1. Slide element off-screen to the left
         Animated.timing(translateX, {
           toValue: -SCREEN_WIDTH,
           duration: SLIDE_OUT_DURATION,
-          useNativeDriver: false, // Layout properties usually require false
+          useNativeDriver: false,
           easing: Easing.out(Easing.ease),
         }),
-        // 2. Collapse the space (Height & Margin) and Fade out
         Animated.parallel([
           Animated.timing(itemHeight, {
             toValue: 0,
@@ -86,7 +81,6 @@ export default function GroupEntry({
           }),
         ]),
       ]).start(() => {
-        // 3. Signal parent to remove data
         if (onDeleteAnimationComplete) {
           onDeleteAnimationComplete();
         }
@@ -94,7 +88,6 @@ export default function GroupEntry({
     }
   }, [isDeleting]);
 
-  // -- TIMER LOGIC (Unchanged) --
   useEffect(() => {
     if (!duration || duration === "Unlimited") {
       setTimeLeft("∞");
@@ -180,7 +173,6 @@ export default function GroupEntry({
       style={[
         styles.container,
         {
-          // Bind animated values
           transform: [{ translateX }],
           height: itemHeight,
           marginBottom: itemMarginBottom,
@@ -219,7 +211,6 @@ export default function GroupEntry({
 
 const styles = StyleSheet.create({
   container: {
-    // marginBottom and height removed here as they are now animated styles
     borderRadius: 16,
     overflow: "hidden",
     shadowColor: "#000",
@@ -230,7 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF3B30",
   },
   pressableContent: {
-    height: ITEM_HEIGHT, // Content has fixed height
+    height: ITEM_HEIGHT,
     paddingVertical: 12,
     paddingHorizontal: 14,
     justifyContent: "space-between",

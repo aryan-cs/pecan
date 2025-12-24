@@ -47,7 +47,6 @@ export default function HomeScreen() {
 
   const [startImmediately, setStartImmediately] = useState(false);
 
-  // 1. STATE TO TRACK ITEMS CURRENTLY ANIMATING OUT
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
   const [groups, setGroups] = useState<
@@ -64,7 +63,7 @@ export default function HomeScreen() {
       name: "Isla Nublar",
       duration: "5 minutes",
       createdAt: Date.now(),
-      active: true,
+      active: false,
     },
     {
       id: "hardcoded-test-2",
@@ -166,7 +165,6 @@ export default function HomeScreen() {
     closeModal();
   };
 
-  // 2. TRIGGER THE ANIMATION FIRST
   const handleLeaveGroup = (id: string) => {
     Alert.alert(
       "Leave Group",
@@ -177,7 +175,6 @@ export default function HomeScreen() {
           text: "Leave",
           style: "destructive",
           onPress: () => {
-            // Add to deleting IDs to trigger animation
             setDeletingIds((prev) => [...prev, id]);
           },
         },
@@ -185,10 +182,9 @@ export default function HomeScreen() {
     );
   };
 
-  // 3. REMOVE DATA AFTER ANIMATION COMPLETES
   const finalizeLeaveGroup = (id: string) => {
     setGroups((prev) => prev.filter((g) => g.id !== id));
-    setDeletingIds((prev) => prev.filter((dId) => dId !== id)); // Cleanup
+    setDeletingIds((prev) => prev.filter((dId) => dId !== id));
   };
 
   const backdropOpacity = animValue.interpolate({
@@ -224,7 +220,7 @@ export default function HomeScreen() {
               createdAt={g.createdAt}
               active={g.active}
               onPress={() => {
-                if (deletingIds.includes(g.id)) return; // Prevent clicks while deleting
+                if (deletingIds.includes(g.id)) return;
                 router.push({
                   pathname: "/item/[id]",
                   params: {
@@ -236,9 +232,7 @@ export default function HomeScreen() {
                   },
                 });
               }}
-              // Pass the leave handler
               onLeave={() => handleLeaveGroup(g.id)}
-              // 4. Pass Animation Props
               isDeleting={deletingIds.includes(g.id)}
               onDeleteAnimationComplete={() => finalizeLeaveGroup(g.id)}
             />
