@@ -47,6 +47,9 @@ export default function HomeScreen() {
 
   const [startImmediately, setStartImmediately] = useState(false);
 
+  // 1. STATE TO TRACK ITEMS CURRENTLY ANIMATING OUT
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
+
   const [groups, setGroups] = useState<
     {
       id: string;
@@ -163,6 +166,31 @@ export default function HomeScreen() {
     closeModal();
   };
 
+  // 2. TRIGGER THE ANIMATION FIRST
+  const handleLeaveGroup = (id: string) => {
+    Alert.alert(
+      "Leave Group",
+      "Are you sure you want to leave this group? This will remove it from your list.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Leave",
+          style: "destructive",
+          onPress: () => {
+            // Add to deleting IDs to trigger animation
+            setDeletingIds((prev) => [...prev, id]);
+          },
+        },
+      ]
+    );
+  };
+
+  // 3. REMOVE DATA AFTER ANIMATION COMPLETES
+  const finalizeLeaveGroup = (id: string) => {
+    setGroups((prev) => prev.filter((g) => g.id !== id));
+    setDeletingIds((prev) => prev.filter((dId) => dId !== id)); // Cleanup
+  };
+
   const backdropOpacity = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 0.5],
@@ -196,6 +224,7 @@ export default function HomeScreen() {
               createdAt={g.createdAt}
               active={g.active}
               onPress={() => {
+                if (deletingIds.includes(g.id)) return; // Prevent clicks while deleting
                 router.push({
                   pathname: "/item/[id]",
                   params: {
@@ -207,6 +236,11 @@ export default function HomeScreen() {
                   },
                 });
               }}
+              // Pass the leave handler
+              onLeave={() => handleLeaveGroup(g.id)}
+              // 4. Pass Animation Props
+              isDeleting={deletingIds.includes(g.id)}
+              onDeleteAnimationComplete={() => finalizeLeaveGroup(g.id)}
             />
           ))
         )}

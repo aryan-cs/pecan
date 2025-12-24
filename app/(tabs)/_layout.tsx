@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/app-shell";
 import { Slot, usePathname } from "expo-router";
 import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler"; // 1. IMPORT THIS
 
 function getTitle(pathname: string) {
   if (pathname === "/" || pathname === "/(tabs)" || pathname === "/(tabs)/")
@@ -20,8 +21,11 @@ export default function TabLayout() {
   const title = getTitle(pathname ?? "/(tabs)");
 
   return (
-    <AppShell title={title}>
-      <Slot />
-    </AppShell>
+    // 2. WRAP THE ENTIRE APP SHELL IN THIS VIEW
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AppShell title={title}>
+        <Slot />
+      </AppShell>
+    </GestureHandlerRootView>
   );
 }
