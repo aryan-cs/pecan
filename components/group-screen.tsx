@@ -121,7 +121,13 @@ export default function GroupScreen() {
         </View>
 
         <View style={styles.mainInfo}>
-          <ThemedText type="title" style={styles.title}>
+          {/* UPDATED TITLE: Smaller font, max 2 lines, auto-shrink if needed */}
+          <ThemedText 
+            type="title" 
+            style={styles.title} 
+            numberOfLines={2} 
+            adjustsFontSizeToFit
+          >
             {name}
           </ThemedText>
 
@@ -155,7 +161,6 @@ export default function GroupScreen() {
                         end={{ x: 0, y: 0 }}
                       />
 
-                      {/* Shifted Left Mask Outwards (-10) to cover edge artifacts */}
                       <LinearGradient
                          colors={[backgroundColor, hexToRgba(backgroundColor, 0)]}
                          start={{ x: 0, y: 0 }}
@@ -163,7 +168,6 @@ export default function GroupScreen() {
                          style={[styles.sideMask, { left: -1 }]}
                       />
 
-                      {/* Shifted Right Mask Outwards (-10) */}
                        <LinearGradient
                          colors={[hexToRgba(backgroundColor, 0), backgroundColor]}
                          start={{ x: 0, y: 0 }}
@@ -239,7 +243,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   title: {
-    fontSize: 32,
+    fontSize: 26, // Reduced from 32
     fontWeight: "bold",
     marginBottom: 8,
   },
@@ -275,7 +279,7 @@ const styles = StyleSheet.create({
   activeIndicatorContainer: {
     position: 'absolute',
     bottom: 0,
-    left: -20, // Increased bleed to soften edges further
+    left: -20, 
     right: -20,
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -297,7 +301,7 @@ const styles = StyleSheet.create({
   sideMask: {
     position: 'absolute',
     bottom: 1, 
-    width: 80, // Increased width to ensure smooth fade
+    width: 80, 
     height: 50, 
     zIndex: 2, 
   },
