@@ -112,20 +112,21 @@ export default function GroupScreen() {
   }, [tabLayouts, selectedTab, isReady]);
 
   const handleLeave = () => {
-    Alert.alert(
-      "Leave Group",
-      "Are you sure you want to leave this group? You will lose your progress.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Leave",
-          style: "destructive",
-          onPress: () => {
-            router.back();
-          },
-        },
-      ]
-    );
+    // Alert.alert(
+    //   "Leave Group",
+    //   "Are you sure you want to leave this group? You will lose your progress.",
+    //   [
+    //     { text: "Cancel", style: "cancel" },
+    //     {
+    //       text: "Leave",
+    //       style: "destructive",
+    //       onPress: () => {
+    //         router.back();
+    //       },
+    //     },
+    //   ]
+    // );
+    Alert.alert("Leave", "Leave group functionality coming soon!");
   };
 
   const handleInvite = () => {
@@ -239,7 +240,7 @@ export default function GroupScreen() {
               </View>
             </Pressable>
             <ThemedText style={[styles.description, { textAlign: "left" }]}>
-              Exit this group and remove it from your list.
+              Exit this group and remove it from your list. [NOT YET IMPLEMENTED]
             </ThemedText>
           </View>
 
