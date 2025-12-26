@@ -1,5 +1,5 @@
 import { ThemedText } from '@/components/ui/themed-text';
-import { BRAND_DARK_MODE } from '@/constants/theme';
+import { BRAND_DARK_MODE, BRAND_LIGHT_MODE } from '@/constants/theme';
 import { useThemeController } from '@/context/theme-context';
 import { supabase } from '@/lib/supabase'; // Import Supabase
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -28,7 +28,7 @@ export default function SettingsScreen() {
 
   const containerColor = isDark ? '#1C1C1E' : '#FFFFFF';
   const textColor = isDark ? '#FFFFFF' : '#000000';
-  const activeSwitchColor = BRAND_DARK_MODE; 
+  const activeSwitchColor = isDark ? BRAND_DARK_MODE : BRAND_LIGHT_MODE;
 
   // --- Handlers ---
   const handleLogout = async () => {
