@@ -22,8 +22,7 @@ export default function Sidebar({
 }: Props) {
   const pathname = usePathname();
   const { colorScheme } = useThemeController();
-  
-  // Theme styling helpers
+
   const accent =
     colorScheme === "dark"
       ? Colors.general.brandDarkMode
@@ -111,8 +110,6 @@ export default function Sidebar({
         </View>
 
         <View style={styles.footerSection}>
-          {/* Dark Mode toggle removed from here */}
-          
           <Pressable
             style={styles.menuItem}
             onPress={() => handlePress("/(tabs)/profile")}
@@ -159,29 +156,6 @@ export default function Sidebar({
               </ThemedText>
             </View>
           </Pressable>
-          {/* <Pressable
-            style={styles.menuItem}
-            onPress={() => handlePress("/(tabs)/profile")}
-          >
-            <View style={styles.menuItemContent}>
-              <FontAwesome6
-                name="circle-user"
-                solid
-                size={22}
-                color={isActive("/profile") ? accent : baseColor}
-              />
-              <ThemedText
-                style={[
-                  styles.menuItemText,
-                  isActive("/profile")
-                    ? { color: accent }
-                    : { color: baseColor },
-                ]}
-              >
-                Profile
-              </ThemedText>
-            </View>
-          </Pressable> */}
         </View>
       </SafeAreaView>
     </Animated.View>

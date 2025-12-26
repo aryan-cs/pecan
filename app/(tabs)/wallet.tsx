@@ -32,7 +32,6 @@ export default function WalletScreen() {
   const insets = useSafeAreaInsets();
   const animatedPadding = useRef(new Animated.Value(insets.bottom)).current;
 
-
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -99,10 +98,10 @@ export default function WalletScreen() {
     colorScheme === "dark"
       ? Colors.general.inputPlaceholderDark
       : Colors.general.inputPlaceholderLight;
-  
+
   const themeColors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const baseText = themeColors.text;
-  const baseBackground = themeColors.background; 
+  const baseBackground = themeColors.background;
 
   const accentTranslucent =
     colorScheme === "dark"
@@ -167,17 +166,25 @@ export default function WalletScreen() {
               onSubmitEditing={() => Keyboard.dismiss()}
               style={[styles.plainInput, { color: baseText }]}
             />
-            
+
             <LinearGradient
-              colors={colorScheme === "dark" ? [Colors.dark.background, 'rgba(17, 17, 17, 0)'] : [Colors.light.background, 'rgba(255,255,255,0)']}
+              colors={
+                colorScheme === "dark"
+                  ? [Colors.dark.background, "rgba(17, 17, 17, 0)"]
+                  : [Colors.light.background, "rgba(255,255,255,0)"]
+              }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.fadeLeft}
-              pointerEvents="none" 
+              pointerEvents="none"
             />
 
             <LinearGradient
-              colors={colorScheme === "dark" ? ['rgba(17, 17, 17, 0)', Colors.dark.background] : ['rgba(255,255,255,0)', Colors.light.background]}
+              colors={
+                colorScheme === "dark"
+                  ? ["rgba(17, 17, 17, 0)", Colors.dark.background]
+                  : ["rgba(255,255,255,0)", Colors.light.background]
+              }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.fadeRight}
@@ -237,8 +244,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   inputContainer: {
-    position: 'relative',
-    width: '100%',
+    position: "relative",
+    width: "100%",
     height: 64,
   },
   plainInput: {
@@ -253,7 +260,7 @@ const styles = StyleSheet.create({
     fontFamily: "BBH_Bartle-Regular",
   },
   fadeLeft: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,
@@ -261,7 +268,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   fadeRight: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
