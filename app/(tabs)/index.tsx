@@ -430,6 +430,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 24,
+    paddingTop: 10,
   },
   formContainer: { gap: 20 },
   inputGroup: { gap: 12 },

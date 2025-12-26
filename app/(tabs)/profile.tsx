@@ -1,10 +1,14 @@
 import { ThemedText } from "@/components/ui/themed-text";
 import { Colors } from "@/constants/theme";
 import { useThemeController } from "@/context/theme-context";
+import { supabase } from "@/lib/supabase";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { decode } from "base64-arraybuffer";
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -38,73 +42,183 @@ export default function ProfileScreen() {
   const profileIconColor = isDark ? "#3A3A3C" : "#E5E5EA";
   const subTextColor = "#8E8E93";
 
-  // Format today's date
-  const today = new Date().toLocaleDateString('en-US', { 
-    month: 'long', 
-    day: 'numeric', 
-    year: 'numeric' 
+  const today = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
 
-  const [imageUri, setImageUri] = useState(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [username, setUsername] = useState("User");
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data } = await supabase
+          .from("profiles")
+          .select("username, avatar_url")
+          .eq("id", user.id)
+          .single();
+
+        if (data) {
+          if (data.username) setUsername(data.username);
+          if (data.avatar_url) setImageUri(data.avatar_url);
+        }
+      } catch (error) {
+        console.log("Error fetching profile:", error);
+      }
+    };
+    getProfile();
+  }, []);
+
+  const deleteUserFiles = async (userId: string) => {
+    try {
+      const { data: list, error: listError } = await supabase.storage
+        .from("avatars")
+        .list(userId);
+
+      if (listError) throw listError;
+
+      if (list && list.length > 0) {
+        const filesToRemove = list.map((x) => `${userId}/${x.name}`);
+
+        const { error: removeError } = await supabase.storage
+          .from("avatars")
+          .remove(filesToRemove);
+
+        if (removeError) throw removeError;
+      }
+    } catch (error) {
+      console.log("Cleanup warning:", error);
+    }
+  };
+
+  const uploadToSupabase = async (uri: string) => {
+    try {
+      setUploading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await deleteUserFiles(user.id);
+
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: "base64",
+      });
+      const fileData = decode(base64);
+
+      const fileName = `${user.id}/${Date.now()}.png`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(fileName, fileData, {
+          contentType: "image/png",
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(fileName);
+
+      const { error: dbError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      if (dbError) throw dbError;
+
+      setImageUri(publicUrl);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      Alert.alert("Upload Failed", (error as any).message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
+      await uploadToSupabase(result.assets[0].uri);
     }
   };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-
     if (status !== "granted") {
-      Alert.alert(
-        "Permission Denied",
-        "Sorry, we need camera permissions to make this work!"
-      );
+      Alert.alert("Permission Denied", "We need camera access.");
       return;
     }
 
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
+      await uploadToSupabase(result.assets[0].uri);
     }
   };
 
-  const removePhoto = () => {
-    setImageUri(null);
+  const removePhoto = async () => {
+    try {
+      setUploading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        await deleteUserFiles(user.id);
+
+        const { error } = await supabase
+          .from("profiles")
+          .update({ avatar_url: null })
+          .eq("id", user.id);
+
+        if (error) throw error;
+
+        setImageUri(null);
+      }
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Error", "Could not remove photo.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleProfilePress = () => {
+    const options = [
+      { text: "Choose from Library", onPress: pickImage },
+      { text: "Take Photo", onPress: takePhoto },
+      { text: "Remove Photo", style: "destructive", onPress: removePhoto },
+      { text: "Cancel", style: "cancel" },
+    ];
+
     if (Platform.OS === "android") {
-      Alert.alert(
-        "Update Profile Photo",
-        "Choose an option",
-        [
-          { text: "Choose from Library", onPress: pickImage },
-          { text: "Take Photo", onPress: takePhoto },
-          { text: "Remove Photo", style: "destructive", onPress: removePhoto },
-        ],
-        { cancelable: true }
-      );
+      options.pop();
+      Alert.alert("Update Profile Photo", "Choose an option", options as any, {
+        cancelable: true,
+      });
     } else {
-      Alert.alert("Update Profile Photo", "Choose an option", [
-        { text: "Choose from Library", onPress: pickImage },
-        { text: "Take Photo", onPress: takePhoto },
-        { text: "Remove Photo", style: "destructive", onPress: removePhoto },
-        { text: "Cancel", style: "cancel" },
-      ]);
+      Alert.alert("Update Profile Photo", "Choose an option", options as any);
     }
   };
 
@@ -112,7 +226,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.header}>
-          <Pressable onPress={handleProfilePress}>
+          <Pressable onPress={handleProfilePress} disabled={uploading}>
             <View
               style={[
                 styles.profilePicContainer,
@@ -121,17 +235,20 @@ export default function ProfileScreen() {
                 },
               ]}
             >
-              {imageUri ? (
+              {uploading ? (
+                <ActivityIndicator color={brandColor} />
+              ) : imageUri ? (
                 <Image
+                  key={imageUri}
                   source={{ uri: imageUri }}
                   style={styles.profileImage}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
               ) : (
                 <FontAwesome6 name="user" size={40} color={subTextColor} />
               )}
 
-              {!imageUri && (
+              {!imageUri && !uploading && (
                 <View style={styles.editBadge}>
                   <FontAwesome6 name="plus" size={14} color="white" />
                 </View>
@@ -140,10 +257,15 @@ export default function ProfileScreen() {
           </Pressable>
 
           <View style={styles.userInfo}>
-            <ThemedText type="title" style={styles.username}>
-              @TheGoat
+            <ThemedText
+              type="title"
+              style={styles.username}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+            >
+              @{username}
             </ThemedText>
-            {/* NEW SUBTEXT ADDED HERE */}
             <ThemedText style={[styles.userSubtext, { color: subTextColor }]}>
               Winning since {today}.
             </ThemedText>
@@ -189,7 +311,7 @@ const styles = StyleSheet.create({
     width: PROFILE_PIC_SIZE,
     height: PROFILE_PIC_SIZE,
     borderRadius: 20,
-    overflow: "visible",
+    overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 24,
@@ -215,15 +337,19 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     alignItems: "center",
+    width: "100%",
   },
   username: {
     fontSize: 28,
     fontWeight: "bold",
+    textAlign: "center",
+    paddingHorizontal: 20,
+    width: "100%",
   },
   userSubtext: {
     fontSize: 14,
     marginTop: 4,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   statsGrid: {
     flexDirection: "row",

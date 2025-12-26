@@ -115,29 +115,6 @@ export default function Sidebar({
           
           <Pressable
             style={styles.menuItem}
-            onPress={() => handlePress("/(tabs)/settings")}
-          >
-            <View style={styles.menuItemContent}>
-              <FontAwesome6
-                name="gear"
-                solid
-                size={22}
-                color={isActive("/settings") ? accent : baseColor}
-              />
-              <ThemedText
-                style={[
-                  styles.menuItemText,
-                  isActive("/settings")
-                    ? { color: accent }
-                    : { color: baseColor },
-                ]}
-              >
-                Settings
-              </ThemedText>
-            </View>
-          </Pressable>
-          <Pressable
-            style={styles.menuItem}
             onPress={() => handlePress("/(tabs)/profile")}
           >
             <View style={styles.menuItemContent}>
@@ -159,6 +136,52 @@ export default function Sidebar({
               </ThemedText>
             </View>
           </Pressable>
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => handlePress("/(tabs)/settings")}
+          >
+            <View style={styles.menuItemContent}>
+              <FontAwesome6
+                name="gear"
+                solid
+                size={22}
+                color={isActive("/settings") ? accent : baseColor}
+              />
+              <ThemedText
+                style={[
+                  styles.menuItemText,
+                  isActive("/settings")
+                    ? { color: accent }
+                    : { color: baseColor },
+                ]}
+              >
+                Settings
+              </ThemedText>
+            </View>
+          </Pressable>
+          {/* <Pressable
+            style={styles.menuItem}
+            onPress={() => handlePress("/(tabs)/profile")}
+          >
+            <View style={styles.menuItemContent}>
+              <FontAwesome6
+                name="circle-user"
+                solid
+                size={22}
+                color={isActive("/profile") ? accent : baseColor}
+              />
+              <ThemedText
+                style={[
+                  styles.menuItemText,
+                  isActive("/profile")
+                    ? { color: accent }
+                    : { color: baseColor },
+                ]}
+              >
+                Profile
+              </ThemedText>
+            </View>
+          </Pressable> */}
         </View>
       </SafeAreaView>
     </Animated.View>
