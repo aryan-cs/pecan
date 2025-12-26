@@ -49,7 +49,7 @@ export default function ProfileScreen() {
   });
 
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState("???");
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
